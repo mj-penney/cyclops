@@ -93,6 +93,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
 
     [METRIC_GRP_IPC] = {
         .id = METRIC_GRP_IPC,
+        .name = "IPC",
         .n_counters = MAX_COUNTER_GRP_SIZE,
         .n_ratios = 2,
         .counter_ids = {
@@ -108,6 +109,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
 
     [METRIC_GRP_LLC_READS] = {
         .id = METRIC_GRP_LLC_READS,
+        .name = "LLC_READS",
         .n_counters = MAX_COUNTER_GRP_SIZE,
         .n_ratios = 1,
         .counter_ids = {
@@ -122,6 +124,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
 
     [METRIC_GRP_L1D_READS] = {
         .id = METRIC_GRP_L1D_READS,
+        .name = "L1D_READS",
         .n_counters = MAX_COUNTER_GRP_SIZE,
         .n_ratios = 1,
         .counter_ids = {
@@ -136,6 +139,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
 
     [METRIC_GRP_L1I_READS] = {
         .id = METRIC_GRP_L1I_READS,
+        .name = "L1I_READS",
         .n_counters = MAX_COUNTER_GRP_SIZE,
         .n_ratios = 1,
         .counter_ids = {
@@ -150,6 +154,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
 
     [METRIC_GRP_DTLB_READS] = {
         .id = METRIC_GRP_DTLB_READS,
+        .name = "DTLB_READS",
         .n_counters = MAX_COUNTER_GRP_SIZE,
         .n_ratios = 1,
         .counter_ids = {
@@ -164,6 +169,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
 
     [METRIC_GRP_ITLB_READS] = {
         .id = METRIC_GRP_ITLB_READS,
+        .name = "ITLB_READS",
         .n_counters = MAX_COUNTER_GRP_SIZE,
         .n_ratios = 1,
         .counter_ids = {
@@ -178,6 +184,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
 
     [METRIC_GRP_BPU_READS] = {
         .id = METRIC_GRP_BPU_READS,
+        .name = "BPU_READS",
         .n_counters = MAX_COUNTER_GRP_SIZE,
         .n_ratios = 1,
         .counter_ids = {
@@ -192,6 +199,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
 
     [METRIC_GRP_BRANCH] = {
         .id = METRIC_GRP_BRANCH,
+        .name = "BRANCH",
         .n_counters = MAX_COUNTER_GRP_SIZE,
         .n_ratios = 1,
         .counter_ids = {
@@ -206,6 +214,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
 
     [METRIC_GRP_STALLED_CYCLES] = {
         .id = METRIC_GRP_STALLED_CYCLES,
+        .name = "STALLED_CYCLES",
         .n_counters = MAX_COUNTER_GRP_SIZE,
         .n_ratios = 1,
         .counter_ids = {
@@ -220,6 +229,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
 
     [METRIC_GRP_PAGE_FAULTS] = {
         .id = METRIC_GRP_PAGE_FAULTS,
+        .name = "PAGE_FAULTS",
         .n_counters = MAX_COUNTER_GRP_SIZE,
         .n_ratios = 0,
         .counter_ids = {
@@ -233,6 +243,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
 
     [METRIC_GRP_ALIGNMENT_FAULTS] = {
         .id = METRIC_GRP_ALIGNMENT_FAULTS,
+        .name = "ALIGNMENT_FAULTS",
         .n_counters = 2,
         .n_ratios = 0,
         .counter_ids = {

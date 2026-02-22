@@ -98,6 +98,7 @@ typedef struct ratio_metric {
 
 typedef struct metric_grp {
     int id;
+    const char *name;
     int n_counters;
     int n_ratios;
     counter_id_t counter_ids[MAX_COUNTER_GRP_SIZE];
