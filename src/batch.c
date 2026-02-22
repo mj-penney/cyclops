@@ -133,7 +133,7 @@ void run_batch(batch_conf_t batch_conf)
     workload_t workload;
 
     init_batch_data(&batch_data, batch_conf);
-    workload = *get_workload(batch_conf.workload_id);
+    workload = all_workloads[batch_conf.workload_id];
 
     workload.init();
     bench_perf_event(batch_conf, &batch_data, workload.workload);

@@ -8,24 +8,31 @@
 #include "../include/metric.h"
 
 static const char help_text[] =
-"Usage: microbench [OPTIONS]\n"
+"Usage: ./microbench [OPTIONS]\n"
 "\n"
-"Options:\n"
+"Options:\n\n"
 "  -h, --help                       Display this message\n"
 "  -w, --workload WORKLOAD          Select workload to benchmark\n"
 "  -m, --metric-group GROUP         Select a group of metrics to record\n"
-"\n"
-"Workloads:\n"
-"  contiguous-array                 Process a contiguous in array\n"
-"  scattered-array                  Process an array of heap in pointers\n"
-"\n"
-"Metric groups:\n"
-"";
+"\n";
 
-static void print_metric_grps_guide(void) {
+static void print_workload_guide(void)
+{
+    printf("Workloads:\n\n");
+
+    for (int i = 0; i < NUMBER_OF_WORKLOADS; i++) {
+        printf("  %s\n", all_workloads[i].name);
+    }
+    printf("\n");
+}
+
+static void print_metric_grp_guide(void)
+{
     metric_grp_t metric_grp;
     counter_id_t counter_id;
     ratio_id_t ratio_id;
+
+    printf("Metric groups:\n\n");
 
     for (int i = 0; i < NUMBER_OF_METRIC_GRPS; i++) {
         metric_grp = metric_grps[i];
@@ -52,7 +59,8 @@ static void print_metric_grps_guide(void) {
     }
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
     char *workload_str = NULL;
     char *metric_grp_str  = NULL;
@@ -70,7 +78,8 @@ int main(int argc, char *argv[]) {
         switch (opt) {
             case 'h':
                 fputs(help_text, stdout);
-                print_metric_grps_guide();
+                print_workload_guide();
+                print_metric_grp_guide();
                 return 0;
             case 'w':
                 workload_str = optarg;

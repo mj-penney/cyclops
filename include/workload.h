@@ -9,12 +9,12 @@ enum {
 
 typedef struct workload {
     int id;
-    char name[64];
+    const char* name;
     void (*init)(void);
     void (*clean)(void);
     void (*workload)(void);
 } workload_t;
 
-const workload_t *get_workload(int workload_id);
+extern const workload_t all_workloads[NUMBER_OF_WORKLOADS];
 
 #endif
