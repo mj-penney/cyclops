@@ -220,7 +220,7 @@ typedef struct perf_result {
     struct {
         uint64_t value;
         uint64_t id;
-    } values[MAX_COUNTER_GRP_SIZE];
+    } values[MAX_PERF_COUNTERS];
 } perf_result_t;
 
 static void store_perf_results(batch_data_t *batch_data,
@@ -256,13 +256,13 @@ uint64_t bench_rdtscp(void (*test_func)(void))
 int bench_perf_event(batch_conf_t batch_conf, batch_data_t *batch_data,
                                               void (*workload)(void))
 {
-    struct perf_event_attr attrs[MAX_COUNTER_GRP_SIZE];
-    int                    perf_ctr_fds[MAX_COUNTER_GRP_SIZE];
-    uint64_t               perf_ctr_ids[MAX_COUNTER_GRP_SIZE];
+    struct perf_event_attr attrs[MAX_PERF_COUNTERS];
+    int                    perf_ctr_fds[MAX_PERF_COUNTERS];
+    uint64_t               perf_ctr_ids[MAX_PERF_COUNTERS];
 
     int n_counters = metric_grps[batch_conf.metric_grp_id].n_counters;
 
-    perf_result_t perf_results[MAX_BATCH_SIZE];
+    perf_result_t perf_results[MAX_BATCH_RUNS];
 
     for (int i = 0; i < n_counters; i++) {
 

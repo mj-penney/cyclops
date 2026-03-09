@@ -13,7 +13,7 @@ int init_batch_conf(batch_conf_t *batch_conf, int warmup_runs,
                                                             int workload_id,
                                                             metric_grp_id_t id)
 {
-    if (batch_runs < 1 || batch_runs > MAX_BATCH_SIZE)
+    if (batch_runs < 1 || batch_runs > MAX_BATCH_RUNS)
         return -1;
 
     batch_conf->warmup_runs   = warmup_runs;

@@ -86,13 +86,13 @@ typedef enum {
 
 typedef struct counter_metric {
     int id;
-    uint64_t raw[MAX_BATCH_SIZE];
+    uint64_t raw[MAX_BATCH_RUNS];
     uint64_agg_t agg;
 } counter_metric_t;
 
 typedef struct ratio_metric {
     int id;
-    double raw[MAX_BATCH_SIZE];
+    double raw[MAX_BATCH_RUNS];
     double_agg_t agg;
 } ratio_metric_t;
 
@@ -101,8 +101,8 @@ typedef struct metric_grp {
     const char *name;
     int n_counters;
     int n_ratios;
-    counter_id_t counter_ids[MAX_COUNTER_GRP_SIZE];
-    ratio_id_t ratio_ids[MAX_RATIO_METRICS];
+    counter_id_t counter_ids[MAX_PERF_COUNTERS];
+    ratio_id_t ratio_ids[MAX_PERF_RATIOS];
 } metric_grp_t;
 
 extern const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS];

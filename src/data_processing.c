@@ -35,7 +35,7 @@ static int cmp_double(const void *a, const void *b)
 uint64_agg_t aggregate_uint64(uint64_t array[], int size)
 {
     uint64_agg_t agg;
-    uint64_t array_cpy[MAX_BATCH_SIZE];
+    uint64_t array_cpy[MAX_BATCH_RUNS];
 
     memcpy(array_cpy, array, size * sizeof(uint64_t));
 
@@ -53,7 +53,7 @@ uint64_agg_t aggregate_uint64(uint64_t array[], int size)
 double_agg_t aggregate_double(double array[], int size)
 {
     double_agg_t agg;
-    double array_cpy[MAX_BATCH_SIZE];
+    double array_cpy[MAX_BATCH_RUNS];
 
     memcpy(array_cpy, array, size * sizeof(double));
 

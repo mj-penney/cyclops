@@ -1,8 +1,8 @@
 #ifndef MICROBENCH_H
 #define MICROBENCH_H
 
-#define MAX_BATCH_SIZE 100
-#define MAX_COUNTER_GRP_SIZE 3
-#define MAX_RATIO_METRICS 3
+#define MAX_BATCH_RUNS 100
+#define MAX_PERF_COUNTERS 3
+#define MAX_PERF_RATIOS 3
 
 #endif

@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
     }
 
     int warmup_runs = 5;
-    int batch_runs = MAX_BATCH_SIZE;
+    int batch_runs = MAX_BATCH_RUNS;
 
     batch_conf_t batch_conf;
     init_batch_conf(&batch_conf, warmup_runs, batch_runs, workload_id,
