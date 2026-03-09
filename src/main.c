@@ -20,7 +20,7 @@ static void print_workload_guide(void)
 {
     printf("Workloads:\n\n");
 
-    for (int i = 0; i < NUMBER_OF_WORKLOADS; i++) {
+    for (int i = 0; i < N_WORKLOADS; i++) {
         printf("  %s\n", all_workloads[i]->name);
     }
     printf("\n");
@@ -34,7 +34,7 @@ static void print_metric_grp_guide(void)
 
     printf("Metric groups:\n\n");
 
-    for (int i = 0; i < NUMBER_OF_METRIC_GRPS; i++) {
+    for (int i = 0; i < N_METRIC_GRPS; i++) {
         metric_grp = metric_grps[i];
         printf("  %s:\n", metric_grp.name);
 

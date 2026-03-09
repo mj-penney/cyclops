@@ -3,7 +3,7 @@
 
 #include "../include/workload.h"
 
-workload_t *all_workloads[NUMBER_OF_WORKLOADS] = {
+workload_t *all_workloads[N_WORKLOADS] = {
     [WL_CONTIGUOUS_ARRAY] = &wl_contiguous_array,
     [WL_SCATTERED_ARRAY] = &wl_scattered_array,
 };

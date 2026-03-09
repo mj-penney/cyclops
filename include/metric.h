@@ -36,11 +36,11 @@ typedef enum {
     COUNTER_TASK_CLOCK_NS,
     COUNTER_ALIGNMENT_FAULTS,
 
-    NUMBER_OF_COUNTERS,
+    N_COUNTER_METRICS,
 
 } counter_id_t;
 
-extern const char *counter_confs[NUMBER_OF_COUNTERS];
+extern const char *counter_confs[N_COUNTER_METRICS];
 
 typedef enum {
 
@@ -57,7 +57,7 @@ typedef enum {
     RATIO_BRANCH_MISPRED_RATE,
     RATIO_FE_VS_BE_STALLS,
 
-    NUMBER_OF_RATIOS,
+    N_RATIO_METRICS,
 
 } ratio_id_t;
 
@@ -67,7 +67,7 @@ typedef struct ratio_conf {
     counter_id_t denominator_id;
 } ratio_conf_t;
 
-extern const ratio_conf_t ratio_confs[NUMBER_OF_RATIOS];
+extern const ratio_conf_t ratio_confs[N_RATIO_METRICS];
 
 typedef enum {
     METRIC_GRP_IPC,
@@ -81,7 +81,7 @@ typedef enum {
     METRIC_GRP_STALLED_CYCLES,
     METRIC_GRP_PAGE_FAULTS,
     METRIC_GRP_ALIGNMENT_FAULTS,
-    NUMBER_OF_METRIC_GRPS,
+    N_METRIC_GRPS,
 } metric_grp_id_t;
 
 typedef struct counter_metric {
@@ -101,10 +101,10 @@ typedef struct metric_grp {
     const char *name;
     int n_counters;
     int n_ratios;
-    counter_id_t counter_ids[MAX_PERF_COUNTERS];
-    ratio_id_t ratio_ids[MAX_PERF_RATIOS];
+    counter_id_t counter_ids[MAX_ACTIVE_COUNTERS];
+    ratio_id_t ratio_ids[MAX_ACTIVE_RATIOS];
 } metric_grp_t;
 
-extern const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS];
+extern const metric_grp_t metric_grps[N_METRIC_GRPS];
 
 #endif

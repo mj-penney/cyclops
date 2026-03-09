@@ -4,7 +4,7 @@
 #include "../include/metric.h"
 #include "../include/data_processing.h"
 
-const char *counter_confs[NUMBER_OF_COUNTERS] = {
+const char *counter_confs[N_COUNTER_METRICS] = {
 
     /* counter metrics */
 
@@ -36,7 +36,7 @@ const char *counter_confs[NUMBER_OF_COUNTERS] = {
 
 };
 
-const ratio_conf_t ratio_confs[NUMBER_OF_RATIOS] = {
+const ratio_conf_t ratio_confs[N_RATIO_METRICS] = {
     [RATIO_INSTRUCTIONS_PER_CYCLE] = {
         .name = "IPC",
         .numerator_id = COUNTER_INSTRUCTIONS,
@@ -89,12 +89,12 @@ const ratio_conf_t ratio_confs[NUMBER_OF_RATIOS] = {
     },
 };
 
-const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
+const metric_grp_t metric_grps[N_METRIC_GRPS] = {
 
     [METRIC_GRP_IPC] = {
         .id = METRIC_GRP_IPC,
         .name = "IPC",
-        .n_counters = MAX_PERF_COUNTERS,
+        .n_counters = MAX_ACTIVE_COUNTERS,
         .n_ratios = 2,
         .counter_ids = {
             COUNTER_CPU_CYCLES,
@@ -110,7 +110,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
     [METRIC_GRP_LLC_READS] = {
         .id = METRIC_GRP_LLC_READS,
         .name = "LLC_READS",
-        .n_counters = MAX_PERF_COUNTERS,
+        .n_counters = MAX_ACTIVE_COUNTERS,
         .n_ratios = 1,
         .counter_ids = {
             COUNTER_CPU_CYCLES,
@@ -125,7 +125,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
     [METRIC_GRP_L1D_READS] = {
         .id = METRIC_GRP_L1D_READS,
         .name = "L1D_READS",
-        .n_counters = MAX_PERF_COUNTERS,
+        .n_counters = MAX_ACTIVE_COUNTERS,
         .n_ratios = 1,
         .counter_ids = {
             COUNTER_CPU_CYCLES,
@@ -140,7 +140,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
     [METRIC_GRP_L1I_READS] = {
         .id = METRIC_GRP_L1I_READS,
         .name = "L1I_READS",
-        .n_counters = MAX_PERF_COUNTERS,
+        .n_counters = MAX_ACTIVE_COUNTERS,
         .n_ratios = 1,
         .counter_ids = {
             COUNTER_CPU_CYCLES,
@@ -155,7 +155,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
     [METRIC_GRP_DTLB_READS] = {
         .id = METRIC_GRP_DTLB_READS,
         .name = "DTLB_READS",
-        .n_counters = MAX_PERF_COUNTERS,
+        .n_counters = MAX_ACTIVE_COUNTERS,
         .n_ratios = 1,
         .counter_ids = {
             COUNTER_CPU_CYCLES,
@@ -170,7 +170,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
     [METRIC_GRP_ITLB_READS] = {
         .id = METRIC_GRP_ITLB_READS,
         .name = "ITLB_READS",
-        .n_counters = MAX_PERF_COUNTERS,
+        .n_counters = MAX_ACTIVE_COUNTERS,
         .n_ratios = 1,
         .counter_ids = {
             COUNTER_CPU_CYCLES,
@@ -185,7 +185,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
     [METRIC_GRP_BPU_READS] = {
         .id = METRIC_GRP_BPU_READS,
         .name = "BPU_READS",
-        .n_counters = MAX_PERF_COUNTERS,
+        .n_counters = MAX_ACTIVE_COUNTERS,
         .n_ratios = 1,
         .counter_ids = {
             COUNTER_CPU_CYCLES,
@@ -200,7 +200,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
     [METRIC_GRP_BRANCH] = {
         .id = METRIC_GRP_BRANCH,
         .name = "BRANCH",
-        .n_counters = MAX_PERF_COUNTERS,
+        .n_counters = MAX_ACTIVE_COUNTERS,
         .n_ratios = 1,
         .counter_ids = {
             COUNTER_CPU_CYCLES,
@@ -215,7 +215,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
     [METRIC_GRP_STALLED_CYCLES] = {
         .id = METRIC_GRP_STALLED_CYCLES,
         .name = "STALLED_CYCLES",
-        .n_counters = MAX_PERF_COUNTERS,
+        .n_counters = MAX_ACTIVE_COUNTERS,
         .n_ratios = 1,
         .counter_ids = {
             COUNTER_CPU_CYCLES,
@@ -230,7 +230,7 @@ const metric_grp_t metric_grps[NUMBER_OF_METRIC_GRPS] = {
     [METRIC_GRP_PAGE_FAULTS] = {
         .id = METRIC_GRP_PAGE_FAULTS,
         .name = "PAGE_FAULTS",
-        .n_counters = MAX_PERF_COUNTERS,
+        .n_counters = MAX_ACTIVE_COUNTERS,
         .n_ratios = 0,
         .counter_ids = {
             COUNTER_PAGE_FAULTS,

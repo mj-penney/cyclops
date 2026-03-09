@@ -6,7 +6,7 @@
 enum {
     WL_CONTIGUOUS_ARRAY,
     WL_SCATTERED_ARRAY,
-    NUMBER_OF_WORKLOADS,
+    N_WORKLOADS,
 };
 
 typedef struct workload {
@@ -17,7 +17,7 @@ typedef struct workload {
     void (*workload)(void);
 } workload_t;
 
-extern workload_t *all_workloads[NUMBER_OF_WORKLOADS];
+extern workload_t *all_workloads[N_WORKLOADS];
 
 extern workload_t wl_contiguous_array;
 extern workload_t wl_scattered_array;

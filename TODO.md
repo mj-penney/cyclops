@@ -9,7 +9,7 @@
 
 ## Small
 
-- `MAX_COUNTER_GRP_SIZE` -> `MAX_COUNTERS`
+- Store the batch data on the heap
 - Improve naming of global config arrays
 - Add option for outputting the run-level results
 - Add a metric group for `rdtscp`

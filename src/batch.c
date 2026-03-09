@@ -35,7 +35,7 @@ static int init_batch_data(batch_data_t *batch_data, batch_conf_t batch_conf)
     batch_data->n_counters = metric_grp.n_counters;
     batch_data->n_ratios = metric_grp.n_ratios;
 
-    for (int i = 0; i < NUMBER_OF_COUNTERS; i++) {
+    for (int i = 0; i < N_COUNTER_METRICS; i++) {
         batch_data->counter_id_map[i] = -1;
     }
 
