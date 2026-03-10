@@ -224,16 +224,22 @@ typedef struct perf_result {
 } perf_result_t;
 
 static void store_perf_results(batch_data_t *batch_data,
-                               perf_result_t perf_results[],
-                               int batch_runs)
+                                               perf_result_t perf_results[],
+                                               uint64_t perf_ctr_ids[],
+                                               int n_counters,
+                                               int batch_runs)
 {
     for (int run = 0; run < batch_runs; run++) {
+
+        /* verify that the kernel did not reorder the counters */
+        for (int i = 0; i < n_counters; i++) {
+            assert(perf_results[run].values[i].id == perf_ctr_ids[i]);
+        }
 
         perf_result_t perf_result = perf_results[run];
         assert(perf_result.time_running == perf_result.time_enabled);
 
         for (unsigned int pr_idx = 0; pr_idx < perf_result.nr; pr_idx++) {
-
             uint64_t value = perf_result.values[pr_idx].value;
             batch_data->counters[pr_idx].raw[run] = value;
         }
@@ -311,14 +317,13 @@ int bench_perf_event(batch_conf_t batch_conf, batch_data_t *batch_data,
     }
 
     for (int i = 0; i < n_counters; i++) {
-        if (close(perf_ctr_fds[i]) == -1)
+        if (close(perf_ctr_fds[i]) == -1) {
             exit(1);
+        }
     }
 
-    for (int i = 0; i < n_counters; i++)
-        assert(perf_results[0].values[i].id == perf_ctr_ids[i]);
-
-    store_perf_results(batch_data, perf_results, batch_conf.batch_runs);
+    store_perf_results(batch_data, perf_results, perf_ctr_ids, n_counters,
+                                                        batch_conf.batch_runs);
 
     return 0;
 }
