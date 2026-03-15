@@ -235,12 +235,12 @@ static void store_perf_results(batch_data_t *batch_data,
 
         perf_result_t *perf_result = &perf_results[run];
 
-        batch_data->time_enabled.raw[run] = perf_result->time_enabled;
-        batch_data->time_running.raw[run] = perf_result->time_running;
+        batch_data->time_enabled.run_vals[run] = perf_result->time_enabled;
+        batch_data->time_running.run_vals[run] = perf_result->time_running;
 
         for (unsigned int pr_idx = 0; pr_idx < perf_result->nr; pr_idx++) {
             uint64_t value = perf_result->values[pr_idx].value;
-            batch_data->counters[pr_idx].raw[run] = value;
+            batch_data->counters[pr_idx].run_vals[run] = value;
         }
     }
 }

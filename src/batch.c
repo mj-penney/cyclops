@@ -44,14 +44,14 @@ static batch_data_t *init_batch_data(batch_conf_t batch_conf)
         perror("Failed to allocate array");
         exit(1);
     } else {
-        batch_data->time_enabled.raw = uint64_ptr;
+        batch_data->time_enabled.run_vals = uint64_ptr;
     }
 
     if ((uint64_ptr = calloc(MAX_BATCH_RUNS, sizeof(uint64_t))) == 0) {
         perror("Failed to allocate array");
         exit(1);
     } else {
-        batch_data->time_running.raw = uint64_ptr;
+        batch_data->time_running.run_vals = uint64_ptr;
     }
 
     for (int i = 0; i < N_COUNTER_METRICS; i++) {
@@ -64,7 +64,7 @@ static batch_data_t *init_batch_data(batch_conf_t batch_conf)
             perror("Failed to allocate array");
             exit(1);
         } else {
-            counter.raw = uint64_ptr;
+            counter.run_vals = uint64_ptr;
         }
         batch_data->counters[i] = counter;
         batch_data->counter_id_map[metric_grp.counter_ids[i]] = i;
@@ -76,7 +76,7 @@ static batch_data_t *init_batch_data(batch_conf_t batch_conf)
             perror("Failed to allocate array");
             exit(1);
         } else {
-            ratio.raw = double_ptr;
+            ratio.run_vals = double_ptr;
         }
         batch_data->ratios[i] = ratio;
     }
@@ -86,20 +86,20 @@ static batch_data_t *init_batch_data(batch_conf_t batch_conf)
 
 static int destroy_batch_data(batch_data_t *batch_data)
 {
-    free(batch_data->time_enabled.raw);
-    batch_data->time_enabled.raw = NULL;
+    free(batch_data->time_enabled.run_vals);
+    batch_data->time_enabled.run_vals = NULL;
 
-    free(batch_data->time_running.raw);
-    batch_data->time_running.raw = NULL;
+    free(batch_data->time_running.run_vals);
+    batch_data->time_running.run_vals = NULL;
 
     for (int i = 0; i < batch_data->n_counters; i++) {
-        free(batch_data->counters[i].raw);
-        batch_data->counters[i].raw = NULL;
+        free(batch_data->counters[i].run_vals);
+        batch_data->counters[i].run_vals = NULL;
     }
 
     for (int i = 0; i < batch_data->n_ratios; i++) {
-        free(batch_data->ratios[i].raw);
-        batch_data->ratios[i].raw = NULL;
+        free(batch_data->ratios[i].run_vals);
+        batch_data->ratios[i].run_vals = NULL;
     }
 
     free(batch_data);
@@ -117,7 +117,7 @@ static int process_batch_ctrs(batch_conf_t batch_conf,
     batch_runs = batch_conf.batch_runs;
 
     for (int i = 0; i < batch_data->n_counters; i++) {
-        agg = aggregate_uint64(batch_data->counters[i].raw, batch_runs);
+        agg = aggregate_uint64(batch_data->counters[i].run_vals, batch_runs);
         batch_data->counters[i].agg = agg;
     }
 
@@ -155,13 +155,13 @@ static int process_batch_ratios(batch_conf_t batch_conf,
         counters = batch_data->counters;
         ratios = batch_data->ratios;
 
-        numerators = counters[numerator_idx].raw;
-        denominators = counters[denominator_idx].raw;
+        numerators = counters[numerator_idx].run_vals;
+        denominators = counters[denominator_idx].run_vals;
 
         batch_runs = batch_conf.batch_runs;
-        calc_ratios(ratios[i].raw, numerators, denominators, batch_runs);
+        calc_ratios(ratios[i].run_vals, numerators, denominators, batch_runs);
 
-        agg = aggregate_double(ratios[i].raw, batch_runs);
+        agg = aggregate_double(ratios[i].run_vals, batch_runs);
         ratios[i].agg = agg;
     }
 

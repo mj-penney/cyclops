@@ -86,13 +86,13 @@ typedef enum {
 
 typedef struct counter_metric {
     int id;
-    uint64_t *raw;
+    uint64_t *run_vals;
     uint64_agg_t agg;
 } counter_metric_t;
 
 typedef struct ratio_metric {
     int id;
-    double *raw;
+    double *run_vals;
     double_agg_t agg;
 } ratio_metric_t;
 
