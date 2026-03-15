@@ -25,18 +25,34 @@ int init_batch_conf(batch_conf_t *batch_conf, int warmup_runs,
     return 0;
 }
 
-static int init_batch_data(batch_data_t *batch_data, batch_conf_t batch_conf)
+static batch_data_t *init_batch_data(batch_conf_t batch_conf)
 {
     metric_grp_t metric_grp;
     counter_metric_t counter;
     ratio_metric_t ratio;
+    uint64_t *uint64_ptr;
+    double *double_ptr;
 
-    memset(batch_data, 0, sizeof(batch_data_t));
+    batch_data_t *batch_data = calloc(1, sizeof(batch_data_t));
 
     metric_grp = metric_grps[batch_conf.metric_grp_id];
 
     batch_data->n_counters = metric_grp.n_counters;
     batch_data->n_ratios = metric_grp.n_ratios;
+
+    if ((uint64_ptr = calloc(MAX_BATCH_RUNS, sizeof(uint64_t))) == 0) {
+        perror("Failed to allocate array");
+        exit(1);
+    } else {
+        batch_data->time_enabled.raw = uint64_ptr;
+    }
+
+    if ((uint64_ptr = calloc(MAX_BATCH_RUNS, sizeof(uint64_t))) == 0) {
+        perror("Failed to allocate array");
+        exit(1);
+    } else {
+        batch_data->time_running.raw = uint64_ptr;
+    }
 
     for (int i = 0; i < N_COUNTER_METRICS; i++) {
         batch_data->counter_id_map[i] = -1;
@@ -44,14 +60,50 @@ static int init_batch_data(batch_data_t *batch_data, batch_conf_t batch_conf)
 
     for (int i = 0; i < metric_grp.n_counters; i++) {
         counter.id = metric_grp.counter_ids[i];
+        if ((uint64_ptr = calloc(MAX_BATCH_RUNS, sizeof(uint64_t))) == 0) {
+            perror("Failed to allocate array");
+            exit(1);
+        } else {
+            counter.raw = uint64_ptr;
+        }
         batch_data->counters[i] = counter;
         batch_data->counter_id_map[metric_grp.counter_ids[i]] = i;
     }
 
     for (int i = 0; i < metric_grp.n_ratios; i++) {
         ratio.id = metric_grp.ratio_ids[i];
+        if ((double_ptr = calloc(MAX_BATCH_RUNS, sizeof(double_ptr))) == 0) {
+            perror("Failed to allocate array");
+            exit(1);
+        } else {
+            ratio.raw = double_ptr;
+        }
         batch_data->ratios[i] = ratio;
     }
+
+    return batch_data;
+}
+
+static int destroy_batch_data(batch_data_t *batch_data)
+{
+    free(batch_data->time_enabled.raw);
+    batch_data->time_enabled.raw = NULL;
+
+    free(batch_data->time_running.raw);
+    batch_data->time_running.raw = NULL;
+
+    for (int i = 0; i < batch_data->n_counters; i++) {
+        free(batch_data->counters[i].raw);
+        batch_data->counters[i].raw = NULL;
+    }
+
+    for (int i = 0; i < batch_data->n_ratios; i++) {
+        free(batch_data->ratios[i].raw);
+        batch_data->ratios[i].raw = NULL;
+    }
+
+    free(batch_data);
+    batch_data = NULL;
 
     return 0;
 }
@@ -132,14 +184,9 @@ static int process_batch_data(batch_conf_t batch_conf,
 
 void run_batch(batch_conf_t batch_conf)
 {
-    batch_data_t *batch_data;
-    workload_t workload;
+    batch_data_t *batch_data = (batch_data_t*)init_batch_data(batch_conf);
 
-    batch_data = (batch_data_t*)malloc(sizeof(batch_data_t));
-    assert(batch_data);
-
-    init_batch_data(batch_data, batch_conf);
-    workload = *all_workloads[batch_conf.workload_id];
+    workload_t workload = *all_workloads[batch_conf.workload_id];
 
     workload.init();
     bench_perf_event(batch_conf, batch_data, workload.workload);
@@ -149,5 +196,5 @@ void run_batch(batch_conf_t batch_conf)
 
     run_report(batch_conf, batch_data);
 
-    free(batch_data);
+    destroy_batch_data(batch_data);
 }
