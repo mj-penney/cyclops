@@ -2,7 +2,7 @@
 
 #include "../include/workload.h"
 
-static const int array_size = 1000000;
+static const int array_size = 1000;
 static int *contiguous_array;
 
 static void init(void)

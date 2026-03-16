@@ -26,14 +26,6 @@ static void pin_thread(void)
         exit(1);
 }
 
-static uint64_t rdtscp()
-{
-    uint32_t lo, hi;
-    __asm__ volatile("cpuid" ::: "rax", "rbx", "rcx", "rdx");
-    __asm__ volatile("rdtscp" : "=a"(lo), "=d"(hi) :: "ecx");
-    return ((uint64_t)hi << 32) | lo;
-}
-
 static struct perf_event_attr create_perf_config(int metric, int is_leader)
 {
     struct perf_event_attr pea;
@@ -245,33 +237,6 @@ static void store_perf_results(batch_data_t *batch_data,
     }
 }
 
-/*
- * This is just a placeholder for now.
- * Might make this function usable at some point.
- */
-int bench_rdtscp(batch_conf_t batch_conf, batch_data_t *batch_data,
-                                          void (*workload)(void))
-{
-    uint64_t start, end, *raw_values;
-
-    raw_values = batch_data->counters[0].run_vals;
-
-    pin_thread();
-
-    for (int i = 0; i < batch_conf.warmup_runs; i++) {
-        workload();
-    }
-
-    for (int i = 0; i < batch_conf.batch_runs; i++) {
-        start = rdtscp();
-        workload();
-        end = rdtscp();
-        raw_values[i] = end - start;
-    }
-
-    return 0;
-}
-
 int bench_perf_event(batch_conf_t batch_conf, batch_data_t *batch_data,
                                               void (*workload)(void))
 {
@@ -343,6 +308,41 @@ int bench_perf_event(batch_conf_t batch_conf, batch_data_t *batch_data,
     store_perf_results(batch_data, perf_results, perf_ctr_ids, n_counters,
                                                         batch_conf.batch_runs);
     free(perf_results);
+
+    return 0;
+}
+
+static uint64_t rdtscp()
+{
+    uint32_t lo, hi;
+    __asm__ volatile("cpuid" ::: "rax", "rbx", "rcx", "rdx");
+    __asm__ volatile("rdtscp" : "=a"(lo), "=d"(hi) :: "ecx");
+    return ((uint64_t)hi << 32) | lo;
+}
+
+/*
+ * This is just a placeholder for now.
+ * Might make this function usable at some point.
+ */
+int bench_rdtscp(batch_conf_t batch_conf, batch_data_t *batch_data,
+                                          void (*workload)(void))
+{
+    uint64_t start, end, *raw_values;
+
+    raw_values = batch_data->counters[0].run_vals;
+
+    pin_thread();
+
+    for (int i = 0; i < batch_conf.warmup_runs; i++) {
+        workload();
+    }
+
+    for (int i = 0; i < batch_conf.batch_runs; i++) {
+        start = rdtscp();
+        workload();
+        end = rdtscp();
+        raw_values[i] = end - start;
+    }
 
     return 0;
 }
