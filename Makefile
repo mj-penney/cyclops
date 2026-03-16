@@ -12,6 +12,7 @@ SRCS=src/main.c \
 		 src/workload.c \
 		 src/wl_contiguous_array.c \
 		 src/wl_scattered_array.c \
+		 src/wl_strided_array.c \
 
 OBJS=$(SRCS:.c=.o)
 

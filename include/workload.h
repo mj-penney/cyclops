@@ -4,6 +4,7 @@
 enum {
     WL_CONTIGUOUS_ARRAY,
     WL_SCATTERED_ARRAY,
+    WL_STRIDED_ARRAY,
     N_WORKLOADS,
 };
 
@@ -19,5 +20,6 @@ extern workload_t *all_workloads[N_WORKLOADS];
 
 extern workload_t wl_contiguous_array;
 extern workload_t wl_scattered_array;
+extern workload_t wl_strided_array;
 
 #endif

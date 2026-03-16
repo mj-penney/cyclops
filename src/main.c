@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     int warmup_runs = 0;
 
     static struct option long_opts[] = {
-        {"help",    required_argument, 0, 'h'},
+        {"help",    no_argument, 0, 'h'},
         {"workload",    required_argument, 0, 'w'},
         {"metric-grp", required_argument, 0, 'g'},
         {"batch-runs", required_argument, 0, 'r'},
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 
     int opt;
 
-    while ((opt = getopt_long(argc, argv, "w:g:h:r:u:", long_opts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hw:g:r:u:", long_opts, NULL)) != -1) {
         switch (opt) {
             case 'h':
                 fputs(help_text, stdout);
@@ -113,7 +113,8 @@ int main(int argc, char *argv[])
 
     } else if (strcmp(workload_str, all_workloads[WL_SCATTERED_ARRAY]->name) == 0) {
         workload_id = WL_SCATTERED_ARRAY;
-
+    } else if (strcmp(workload_str, all_workloads[WL_STRIDED_ARRAY]->name) == 0) {
+        workload_id = WL_STRIDED_ARRAY;
     }
 
     if (strcmp(metric_grp_str, metric_grps[METRIC_GRP_IPC].name) == 0) {
