@@ -2,17 +2,17 @@
 CC=gcc
 CFLAGS?=$(BUILD_CFLAGS)
 
-# Source files
-SRCS=src/main.c \
-		 src/bench.c \
-		 src/batch.c \
-		 src/data_processing.c \
-		 src/metric.c \
-		 src/report.c \
-		 src/workload.c \
-		 src/wl_contiguous_array.c \
-		 src/wl_scattered_array.c \
-		 src/wl_strided_array.c \
+CORE_SRCS=core/main.c \
+	core/bench.c \
+	core/batch.c \
+	core/data_processing.c \
+	core/metric.c \
+	core/report.c \
+	core/workload.c
+
+WORKLOAD_SRCS := $(wildcard workloads/*.c)
+
+SRCS := $(CORE_SRCS) $(WORKLOAD_SRCS)
 
 OBJS=$(SRCS:.c=.o)
 
@@ -37,4 +37,3 @@ clear:
 	rm -f $(OBJS) $(OUT)
 
 .PHONY: all clean clear
-
