@@ -7,10 +7,10 @@ static int array_elements;
 
 static int *array;
 
-static void init(workload_t *wl, wl_arg_slice_t *wl_args)
+static void init(workload_t *wl)
 {
-    stride_bytes = get_wl_param_val(wl, wl_args, "stride-bytes");
-    array_elements = get_wl_param_val(wl, wl_args, "array-elements");
+    stride_bytes = wl_get_param(wl, "stride-bytes");
+    array_elements = wl_get_param(wl, "array-elements");
 
     array = (int *)aligned_alloc(stride_bytes, stride_bytes * array_elements);
     for (int i = 0; i < array_elements; i++) {
@@ -31,12 +31,11 @@ __attribute__((noinline)) static void workload(void)
     }
 }
 
-static const wl_param_t params[] = {
+static wl_param_t params[] = {
     {
         .key = "stride-bytes",
         .default_value = "64", // 1 element per cache line
-    },
-    {
+    }, {
         .key = "array-elements",
         .default_value = "1000000",
     },

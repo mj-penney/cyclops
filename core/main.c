@@ -68,9 +68,6 @@ int main(int argc, char *argv[])
     char *metric_grp_str  = NULL;
     int batch_runs = 0;
     int warmup_runs = 0;
-    wl_arg_slice_t wl_args;
-
-    memset(&wl_args, 0, sizeof(wl_arg_slice_t));
 
     static struct option long_opts[] = {
         {"help",    no_argument, 0, 'h'},
@@ -104,24 +101,6 @@ int main(int argc, char *argv[])
                 warmup_runs = atoi(optarg);
                 break;
             case 'p':
-                if (wl_args.n_args >= MAX_WL_PARAMS) {
-                    fprintf(stderr, "Too many workload params");
-                    return 1;
-                }
-
-                char *arg = optarg;
-                char *eq = strchr(arg, '=');
-
-                if (!eq) {
-                    fprintf(stderr, "Invalid param format: %s\n", arg);
-                    return 1;
-                }
-
-                *eq = '\0'; // split into two strings
-
-                wl_args.args[wl_args.n_args].key = arg;
-                wl_args.args[wl_args.n_args].value = eq + 1;
-                wl_args.n_args++;
                 break;
             default:
                 fprintf(stderr, "Usage 1\n");
@@ -132,6 +111,28 @@ int main(int argc, char *argv[])
     workload_t *wl = get_workload_by_name(workload_str);
     int metric_grp_id = get_metric_grp_id_from_name(metric_grp_str);
 
+    char *arg;
+    char *eq;
+    while ((opt = getopt_long(argc, argv, "p:", long_opts, NULL)) != -1) {
+        switch (opt) {
+            case 'p':
+                arg = optarg;
+                eq = strchr(arg, '=');
+
+                if (!eq) {
+                    fprintf(stderr, "Invalid param format: %s\n", arg);
+                    return 1;
+                }
+
+                *eq = '\0'; // split into two strings
+
+                wl_set_param(wl, arg, eq + 1);
+                break;
+            default:
+                break;
+        }
+    }
+
     if (!wl || metric_grp_id < 0) {
         fprintf(stderr, "Usage 2\n");
         return 1;
@@ -139,7 +140,7 @@ int main(int argc, char *argv[])
 
     batch_conf_t batch_conf;
     init_batch_conf(&batch_conf, warmup_runs, batch_runs, wl, metric_grp_id);
-    run_batch(batch_conf, &wl_args);
+    run_batch(batch_conf);
 
     return 0;
 }

@@ -188,12 +188,12 @@ static int process_batch_data(batch_conf_t batch_conf,
     return 0;
 }
 
-void run_batch(batch_conf_t batch_conf, wl_arg_slice_t *wl_args)
+void run_batch(batch_conf_t batch_conf)
 {
     batch_data_t *batch_data = (batch_data_t*)init_batch_data(batch_conf);
     workload_t *wl = batch_conf.wl;
 
-    wl->init(wl, wl_args);
+    wl->init(wl);
 
     if (batch_conf.metric_grp_id == METRIC_GRP_TIMER) {
         bench_timer(batch_conf, batch_data, wl->workload);

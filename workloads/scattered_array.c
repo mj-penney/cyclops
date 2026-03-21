@@ -5,10 +5,9 @@
 static const int array_size = 1000000;
 static int **scattered_array;
 
-static void init(workload_t *wl, wl_arg_slice_t *wl_args)
+static void init(workload_t *wl)
 {
     (void)wl;
-    (void)wl_args;
 
     scattered_array = (int **)calloc(array_size, sizeof(int *));
     for (int i = 0; i < array_size; i++) {
@@ -37,6 +36,7 @@ __attribute__((noinline)) static void workload(void)
 
 static workload_t wl = {
     .name = "SCATTERED_ARRAY",
+
     .init = init,
     .clean = clean,
     .workload = workload,

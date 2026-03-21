@@ -39,24 +39,39 @@ workload_t *get_workload_by_name(const char *name)
  * If no arg is provided for this param by the user (with --param key=value),
  * use the param's default value.
  */
-int get_wl_param_val(workload_t *wl, wl_arg_slice_t *wl_args, const char *key)
+int wl_get_param(workload_t *wl, const char *key)
 {
-    const int n_params = wl->n_params;
-    const wl_param_t *params = wl->params;
-
-    for (int i = 0; i < wl_args->n_args; i++) {
-        if (strcmp(key, wl_args->args[i].key) == 0) {
-            return atoi(wl_args->args[i].value);
-        }
-    }
-
-    for (int i = 0; i < n_params; i++) {
-        if (strcmp(key, params[i].key) == 0) {
-            return atoi(params[i].default_value);
+    for (int i = 0; i < wl->n_params; i++) {
+        if (strcmp(wl->params[i].key, key) == 0) {
+            if (wl->params[i].arg) {
+                return atoi(wl->params[i].arg);
+            }
+            return atoi(wl->params[i].default_value);
         };
     }
 
-    fprintf(stderr, "Invalid workload param key '%s'\n", key);
+    fprintf(stderr, "Invalid workload parameter '%s'\n", key);
     exit(1);
     return 0;
+}
+
+void wl_set_param(workload_t *wl, const char *key, const char *arg)
+{
+    if (!wl->params) {
+        fprintf(stderr, "Workload has no parameters\n");
+        return;
+    }
+
+    for (int i = 0; i < wl->n_params; i++) {
+        if (strcmp(wl->params[i].key, key) == 0) {
+            if (wl->params[i].arg) {
+                fprintf(stderr,
+                        "Value for workload parameter %s already set\n", key);
+            }
+            wl->params[i].arg = arg;
+            return;
+        }
+    }
+
+    fprintf(stderr, "Invalid workload parameter '%s'\n", key);
 }
