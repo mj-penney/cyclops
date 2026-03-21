@@ -63,7 +63,7 @@ static batch_data_t *init_batch_data(batch_conf_t batch_conf)
     }
 
     /* init poor man's map elements to -1 */
-    memset(data->counter_id_map, -1, N_COUNTER_METRICS * sizeof(int));
+    memset(data->counter_id_map, -1, N_RAW_METRICS * sizeof(int));
 
     /* init counter metrics */
     for (int i = 0; i < metric_grp.n_counters; i++) {

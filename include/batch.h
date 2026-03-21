@@ -19,7 +19,7 @@ typedef struct batch_data {
     counter_metric_t time_running;
 
     int n_counters;
-    counter_metric_t counters[MAX_ACTIVE_COUNTERS];
+    counter_metric_t counters[MAX_ACTIVE_PERF_COUNTERS];
 
     int n_ratios;
     ratio_metric_t ratios[MAX_ACTIVE_RATIOS];
@@ -37,7 +37,7 @@ typedef struct batch_data {
      *         return -1; // error
      *     }
      */
-    int counter_id_map[N_COUNTER_METRICS];
+    int counter_id_map[N_RAW_METRICS];
 } batch_data_t;
 
 int init_batch_conf(batch_conf_t *batch_conf, int warmup_runs,

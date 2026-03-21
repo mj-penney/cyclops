@@ -4,90 +4,90 @@
 #include "../include/metric.h"
 #include "../include/data_processing.h"
 
-const char *counter_confs[N_COUNTER_METRICS] = {
+const char *counter_confs[N_RAW_METRICS] = {
 
-    /* counter metrics */
+    /* raw metrics */
 
-    [COUNTER_CPU_CYCLES]              = "CPU_CYCLES",
-    [COUNTER_REF_CPU_CYCLES]          = "REF_CPU_CYCLES",
-    [COUNTER_INSTRUCTIONS]            = "INSTRUCTIONS",
-    [COUNTER_LLC_READ_ACCESSES]       = "LLC_READ_ACCESSES",
-    [COUNTER_LLC_READ_MISSES]         = "LLC_READ_MISSES",
-    [COUNTER_L1D_READ_ACCESSES]       = "L1D_READ_ACCESSES",
-    [COUNTER_L1D_READ_MISSES]         = "L1D_READ_MISSES",
-    [COUNTER_L1I_READ_ACCESSES]       = "L1I_READ_ACCESSES",
-    [COUNTER_L1I_READ_MISSES]         = "L1I_READ_MISSES",
-    [COUNTER_DTLB_READ_ACCESSES]      = "DTLB_READ_ACCESSES",
-    [COUNTER_DTLB_READ_MISSES]        = "DTLB_READ_MISSES",
-    [COUNTER_ITLB_READ_ACCESSES]      = "ITLB_READ_ACCESSES",
-    [COUNTER_ITLB_READ_MISSES]        = "ITLB_READ_MISSES",
-    [COUNTER_BPU_READ_ACCESSES]       = "BPU_READ_ACCESSES",
-    [COUNTER_BPU_READ_MISSES]         = "BPU_READ_MISSES",
-    [COUNTER_BRANCH_INSTRUCTIONS]     = "BRANCH_INSTRUCTIONS",
-    [COUNTER_BRANCH_MISPREDICTIONS]   = "BRANCH_MISPREDICTIONS",
-    [COUNTER_STALLED_CYCLES_FRONTEND] = "STALLED_CYCLES_FRONTEND",
-    [COUNTER_STALLED_CYCLES_BACKEND]  = "STALLED_CYCLES_BACKEND",
-    [COUNTER_PAGE_FAULTS]             = "PAGE_FAULTS",
-    [COUNTER_PAGE_FAULTS_MAJ]         = "PAGE_FAULTS_MAJ",
-    [COUNTER_PAGE_FAULTS_MIN]         = "PAGE_FAULTS_MIN",
-    [COUNTER_CPU_CLOCK_NS]            = "CPU_CLOCK_NS",
-    [COUNTER_TASK_CLOCK_NS]           = "TASK_CLOCK_NS",
-    [COUNTER_ALIGNMENT_FAULTS]        = "ALIGNMENT_FAULTS",
+    [RAW_CPU_CYCLES]              = "CPU_CYCLES",
+    [RAW_REF_CPU_CYCLES]          = "REF_CPU_CYCLES",
+    [RAW_INSTRUCTIONS]            = "INSTRUCTIONS",
+    [RAW_LLC_READ_ACCESSES]       = "LLC_READ_ACCESSES",
+    [RAW_LLC_READ_MISSES]         = "LLC_READ_MISSES",
+    [RAW_L1D_READ_ACCESSES]       = "L1D_READ_ACCESSES",
+    [RAW_L1D_READ_MISSES]         = "L1D_READ_MISSES",
+    [RAW_L1I_READ_ACCESSES]       = "L1I_READ_ACCESSES",
+    [RAW_L1I_READ_MISSES]         = "L1I_READ_MISSES",
+    [RAW_DTLB_READ_ACCESSES]      = "DTLB_READ_ACCESSES",
+    [RAW_DTLB_READ_MISSES]        = "DTLB_READ_MISSES",
+    [RAW_ITLB_READ_ACCESSES]      = "ITLB_READ_ACCESSES",
+    [RAW_ITLB_READ_MISSES]        = "ITLB_READ_MISSES",
+    [RAW_BPU_READ_ACCESSES]       = "BPU_READ_ACCESSES",
+    [RAW_BPU_READ_MISSES]         = "BPU_READ_MISSES",
+    [RAW_BRANCH_INSTRUCTIONS]     = "BRANCH_INSTRUCTIONS",
+    [RAW_BRANCH_MISPREDICTIONS]   = "BRANCH_MISPREDICTIONS",
+    [RAW_STALLED_CYCLES_FRONTEND] = "STALLED_CYCLES_FRONTEND",
+    [RAW_STALLED_CYCLES_BACKEND]  = "STALLED_CYCLES_BACKEND",
+    [RAW_PAGE_FAULTS]             = "PAGE_FAULTS",
+    [RAW_PAGE_FAULTS_MAJ]         = "PAGE_FAULTS_MAJ",
+    [RAW_PAGE_FAULTS_MIN]         = "PAGE_FAULTS_MIN",
+    [RAW_CPU_CLOCK_NS]            = "CPU_CLOCK_NS",
+    [RAW_TASK_CLOCK_NS]           = "TASK_CLOCK_NS",
+    [RAW_ALIGNMENT_FAULTS]        = "ALIGNMENT_FAULTS",
 
-    [COUNTER_TIMER]                   = "TIMER",
+    [RAW_TIMER]                   = "TIMER",
 
 };
 
 const ratio_conf_t ratio_confs[N_RATIO_METRICS] = {
     [RATIO_INSTRUCTIONS_PER_CYCLE] = {
         .name = "IPC",
-        .numerator_id = COUNTER_INSTRUCTIONS,
-        .denominator_id = COUNTER_CPU_CYCLES,
+        .numerator_id = RAW_INSTRUCTIONS,
+        .denominator_id = RAW_CPU_CYCLES,
     },
     [RATIO_CYCLES_PER_INSTRUCTION] = {
         .name = "CPI",
-        .numerator_id = COUNTER_CPU_CYCLES,
-        .denominator_id = COUNTER_INSTRUCTIONS,
+        .numerator_id = RAW_CPU_CYCLES,
+        .denominator_id = RAW_INSTRUCTIONS,
     },
     [RATIO_LLC_READ_MISS_RATE] = {
         .name = "LLC_READ_MISS_RATE",
-        .numerator_id = COUNTER_LLC_READ_MISSES,
-        .denominator_id = COUNTER_LLC_READ_ACCESSES,
+        .numerator_id = RAW_LLC_READ_MISSES,
+        .denominator_id = RAW_LLC_READ_ACCESSES,
     },
     [RATIO_L1D_READ_MISS_RATE] = {
         .name = "L1D_READ_MISS_RATE",
-        .numerator_id = COUNTER_L1D_READ_MISSES,
-        .denominator_id = COUNTER_L1D_READ_ACCESSES,
+        .numerator_id = RAW_L1D_READ_MISSES,
+        .denominator_id = RAW_L1D_READ_ACCESSES,
     },
     [RATIO_L1I_READ_MISS_RATE] = {
         .name = "L1I_READ_MISS_RATE",
-        .numerator_id = COUNTER_L1I_READ_MISSES,
-        .denominator_id = COUNTER_L1I_READ_ACCESSES,
+        .numerator_id = RAW_L1I_READ_MISSES,
+        .denominator_id = RAW_L1I_READ_ACCESSES,
     },
     [RATIO_DTLB_READ_MISS_RATE] = {
         .name = "DTLB_READ_MISS_RATE",
-        .numerator_id = COUNTER_DTLB_READ_MISSES,
-        .denominator_id = COUNTER_DTLB_READ_ACCESSES,
+        .numerator_id = RAW_DTLB_READ_MISSES,
+        .denominator_id = RAW_DTLB_READ_ACCESSES,
     },
     [RATIO_ITLB_READ_MISS_RATE] = {
         .name = "ITLB_READ_MISS_RATE",
-        .numerator_id = COUNTER_ITLB_READ_MISSES,
-        .denominator_id = COUNTER_ITLB_READ_ACCESSES,
+        .numerator_id = RAW_ITLB_READ_MISSES,
+        .denominator_id = RAW_ITLB_READ_ACCESSES,
     },
     [RATIO_BPU_READ_MISS_RATE] = {
         .name = "BPU_READ_MISS_RATE",
-        .numerator_id = COUNTER_BPU_READ_MISSES,
-        .denominator_id = COUNTER_BPU_READ_ACCESSES,
+        .numerator_id = RAW_BPU_READ_MISSES,
+        .denominator_id = RAW_BPU_READ_ACCESSES,
     },
     [RATIO_BRANCH_MISPRED_RATE] = {
         .name = "BRANCH_MISPRED_RATE",
-        .numerator_id = COUNTER_BRANCH_MISPREDICTIONS,
-        .denominator_id = COUNTER_BRANCH_INSTRUCTIONS,
+        .numerator_id = RAW_BRANCH_MISPREDICTIONS,
+        .denominator_id = RAW_BRANCH_INSTRUCTIONS,
     },
     [RATIO_FE_VS_BE_STALLS] = {
         .name = "FE_VS_BE_STALLS",
-        .numerator_id = COUNTER_STALLED_CYCLES_FRONTEND,
-        .denominator_id = COUNTER_STALLED_CYCLES_BACKEND,
+        .numerator_id = RAW_STALLED_CYCLES_FRONTEND,
+        .denominator_id = RAW_STALLED_CYCLES_BACKEND,
     },
 };
 
@@ -99,9 +99,9 @@ const metric_grp_t metric_grps[N_METRIC_GRPS] = {
         .n_counters = 3,
         .n_ratios = 2,
         .counter_ids = {
-            COUNTER_CPU_CYCLES,
-            COUNTER_REF_CPU_CYCLES,
-            COUNTER_INSTRUCTIONS,
+            RAW_CPU_CYCLES,
+            RAW_REF_CPU_CYCLES,
+            RAW_INSTRUCTIONS,
         },
         .ratio_ids = {
             RATIO_INSTRUCTIONS_PER_CYCLE,
@@ -115,9 +115,9 @@ const metric_grp_t metric_grps[N_METRIC_GRPS] = {
         .n_counters = 3,
         .n_ratios = 1,
         .counter_ids = {
-            COUNTER_CPU_CYCLES,
-            COUNTER_LLC_READ_ACCESSES,
-            COUNTER_LLC_READ_MISSES,
+            RAW_CPU_CYCLES,
+            RAW_LLC_READ_ACCESSES,
+            RAW_LLC_READ_MISSES,
         },
         .ratio_ids = {
             RATIO_LLC_READ_MISS_RATE,
@@ -130,9 +130,9 @@ const metric_grp_t metric_grps[N_METRIC_GRPS] = {
         .n_counters = 3,
         .n_ratios = 1,
         .counter_ids = {
-            COUNTER_CPU_CYCLES,
-            COUNTER_L1D_READ_ACCESSES,
-            COUNTER_L1D_READ_MISSES,
+            RAW_CPU_CYCLES,
+            RAW_L1D_READ_ACCESSES,
+            RAW_L1D_READ_MISSES,
         },
         .ratio_ids = {
             RATIO_L1D_READ_MISS_RATE,
@@ -145,9 +145,9 @@ const metric_grp_t metric_grps[N_METRIC_GRPS] = {
         .n_counters = 3,
         .n_ratios = 1,
         .counter_ids = {
-            COUNTER_CPU_CYCLES,
-            COUNTER_L1I_READ_ACCESSES,
-            COUNTER_L1I_READ_MISSES,
+            RAW_CPU_CYCLES,
+            RAW_L1I_READ_ACCESSES,
+            RAW_L1I_READ_MISSES,
         },
         .ratio_ids = {
             RATIO_L1I_READ_MISS_RATE,
@@ -160,9 +160,9 @@ const metric_grp_t metric_grps[N_METRIC_GRPS] = {
         .n_counters = 3,
         .n_ratios = 1,
         .counter_ids = {
-            COUNTER_CPU_CYCLES,
-            COUNTER_DTLB_READ_ACCESSES,
-            COUNTER_DTLB_READ_MISSES,
+            RAW_CPU_CYCLES,
+            RAW_DTLB_READ_ACCESSES,
+            RAW_DTLB_READ_MISSES,
         },
         .ratio_ids = {
             RATIO_DTLB_READ_MISS_RATE,
@@ -175,9 +175,9 @@ const metric_grp_t metric_grps[N_METRIC_GRPS] = {
         .n_counters = 3,
         .n_ratios = 1,
         .counter_ids = {
-            COUNTER_CPU_CYCLES,
-            COUNTER_ITLB_READ_ACCESSES,
-            COUNTER_ITLB_READ_MISSES,
+            RAW_CPU_CYCLES,
+            RAW_ITLB_READ_ACCESSES,
+            RAW_ITLB_READ_MISSES,
         },
         .ratio_ids = {
             RATIO_ITLB_READ_MISS_RATE,
@@ -190,9 +190,9 @@ const metric_grp_t metric_grps[N_METRIC_GRPS] = {
         .n_counters = 3,
         .n_ratios = 1,
         .counter_ids = {
-            COUNTER_CPU_CYCLES,
-            COUNTER_BPU_READ_ACCESSES,
-            COUNTER_BPU_READ_MISSES,
+            RAW_CPU_CYCLES,
+            RAW_BPU_READ_ACCESSES,
+            RAW_BPU_READ_MISSES,
         },
         .ratio_ids = {
             RATIO_BPU_READ_MISS_RATE,
@@ -205,9 +205,9 @@ const metric_grp_t metric_grps[N_METRIC_GRPS] = {
         .n_counters = 3,
         .n_ratios = 1,
         .counter_ids = {
-            COUNTER_CPU_CYCLES,
-            COUNTER_BRANCH_INSTRUCTIONS,
-            COUNTER_BRANCH_MISPREDICTIONS,
+            RAW_CPU_CYCLES,
+            RAW_BRANCH_INSTRUCTIONS,
+            RAW_BRANCH_MISPREDICTIONS,
         },
         .ratio_ids = {
             RATIO_BRANCH_MISPRED_RATE,
@@ -220,9 +220,9 @@ const metric_grp_t metric_grps[N_METRIC_GRPS] = {
         .n_counters = 3,
         .n_ratios = 1,
         .counter_ids = {
-            COUNTER_CPU_CYCLES,
-            COUNTER_STALLED_CYCLES_FRONTEND,
-            COUNTER_STALLED_CYCLES_BACKEND,
+            RAW_CPU_CYCLES,
+            RAW_STALLED_CYCLES_FRONTEND,
+            RAW_STALLED_CYCLES_BACKEND,
         },
         .ratio_ids = {
             RATIO_FE_VS_BE_STALLS,
@@ -235,9 +235,9 @@ const metric_grp_t metric_grps[N_METRIC_GRPS] = {
         .n_counters = 3,
         .n_ratios = 0,
         .counter_ids = {
-            COUNTER_PAGE_FAULTS,
-            COUNTER_PAGE_FAULTS_MAJ,
-            COUNTER_PAGE_FAULTS_MIN,
+            RAW_PAGE_FAULTS,
+            RAW_PAGE_FAULTS_MAJ,
+            RAW_PAGE_FAULTS_MIN,
         },
         //.ratio_ids = {
         //},
@@ -249,8 +249,8 @@ const metric_grp_t metric_grps[N_METRIC_GRPS] = {
         .n_counters = 2,
         .n_ratios = 0,
         .counter_ids = {
-            COUNTER_CPU_CYCLES,
-            COUNTER_ALIGNMENT_FAULTS,
+            RAW_CPU_CYCLES,
+            RAW_ALIGNMENT_FAULTS,
         },
         //.ratio_ids = {
         //},
@@ -262,7 +262,7 @@ const metric_grp_t metric_grps[N_METRIC_GRPS] = {
         .n_counters = 1,
         .n_ratios = 0,
         .counter_ids = {
-            COUNTER_TIMER,
+            RAW_TIMER,
         },
         //.ratio_ids = {
         //},

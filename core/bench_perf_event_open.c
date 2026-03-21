@@ -21,127 +21,127 @@ static struct perf_event_attr create_perf_config(int metric, int is_leader)
     memset(&pea, 0, sizeof(struct perf_event_attr));
 
     switch (metric) {
-        case COUNTER_CPU_CYCLES:
+        case RAW_CPU_CYCLES:
             pea.type = PERF_TYPE_HARDWARE;
             pea.config = PERF_COUNT_HW_CPU_CYCLES;
             break;
-        case COUNTER_REF_CPU_CYCLES:
+        case RAW_REF_CPU_CYCLES:
             pea.type = PERF_TYPE_HARDWARE;
             pea.config = PERF_COUNT_HW_REF_CPU_CYCLES;
             break;
-        case COUNTER_INSTRUCTIONS:
+        case RAW_INSTRUCTIONS:
             pea.type = PERF_TYPE_HARDWARE;
             pea.config = PERF_COUNT_HW_INSTRUCTIONS;
             break;
-        case COUNTER_LLC_READ_ACCESSES:
+        case RAW_LLC_READ_ACCESSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_LL
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16);
             break;
-        case COUNTER_LLC_READ_MISSES:
+        case RAW_LLC_READ_MISSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_LL
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_MISS << 16);
             break;
-        case COUNTER_L1D_READ_ACCESSES:
+        case RAW_L1D_READ_ACCESSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_L1D
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16);
             break;
-        case COUNTER_L1D_READ_MISSES:
+        case RAW_L1D_READ_MISSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_L1D
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_MISS << 16);
             break;
-        case COUNTER_L1I_READ_ACCESSES:
+        case RAW_L1I_READ_ACCESSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_L1I
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16);
             break;
-        case COUNTER_L1I_READ_MISSES:
+        case RAW_L1I_READ_MISSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_L1I
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_MISS << 16);
             break;
-        case COUNTER_DTLB_READ_ACCESSES:
+        case RAW_DTLB_READ_ACCESSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_DTLB
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16);
             break;
-        case COUNTER_DTLB_READ_MISSES:
+        case RAW_DTLB_READ_MISSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_DTLB
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_MISS << 16);
             break;
-        case COUNTER_ITLB_READ_ACCESSES:
+        case RAW_ITLB_READ_ACCESSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_ITLB
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16);
             break;
-        case COUNTER_ITLB_READ_MISSES:
+        case RAW_ITLB_READ_MISSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_ITLB
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_MISS << 16);
             break;
-        case COUNTER_BPU_READ_ACCESSES:
+        case RAW_BPU_READ_ACCESSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_BPU
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16);
             break;
-        case COUNTER_BPU_READ_MISSES:
+        case RAW_BPU_READ_MISSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_BPU
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_MISS << 16);
             break;
-        case COUNTER_BRANCH_INSTRUCTIONS:
+        case RAW_BRANCH_INSTRUCTIONS:
             pea.type = PERF_TYPE_HARDWARE;
             pea.config = PERF_COUNT_HW_BRANCH_INSTRUCTIONS;
             break;
-        case COUNTER_BRANCH_MISPREDICTIONS:
+        case RAW_BRANCH_MISPREDICTIONS:
             pea.type = PERF_TYPE_HARDWARE;
             pea.config = PERF_COUNT_HW_BRANCH_MISSES;
             break;
-        case COUNTER_STALLED_CYCLES_FRONTEND:
+        case RAW_STALLED_CYCLES_FRONTEND:
             pea.type = PERF_TYPE_HARDWARE;
             pea.config = PERF_COUNT_HW_STALLED_CYCLES_FRONTEND;
             break;
-        case COUNTER_STALLED_CYCLES_BACKEND:
+        case RAW_STALLED_CYCLES_BACKEND:
             pea.type = PERF_TYPE_HARDWARE;
             pea.config = PERF_COUNT_HW_STALLED_CYCLES_BACKEND;
             break;
-        case COUNTER_PAGE_FAULTS:
+        case RAW_PAGE_FAULTS:
             pea.type = PERF_TYPE_SOFTWARE;
             pea.config = PERF_COUNT_SW_PAGE_FAULTS;
             break;
-        case COUNTER_PAGE_FAULTS_MAJ:
+        case RAW_PAGE_FAULTS_MAJ:
             pea.type = PERF_TYPE_SOFTWARE;
             pea.config = PERF_COUNT_SW_PAGE_FAULTS_MAJ;
             break;
-        case COUNTER_PAGE_FAULTS_MIN:
+        case RAW_PAGE_FAULTS_MIN:
             pea.type = PERF_TYPE_SOFTWARE;
             pea.config = PERF_COUNT_SW_PAGE_FAULTS_MIN;
             break;
-        case COUNTER_CPU_CLOCK_NS:
+        case RAW_CPU_CLOCK_NS:
             pea.type = PERF_TYPE_SOFTWARE;
             pea.config = PERF_COUNT_SW_CPU_CLOCK;
             break;
-        case COUNTER_TASK_CLOCK_NS:
+        case RAW_TASK_CLOCK_NS:
             pea.type = PERF_TYPE_SOFTWARE;
             pea.config = PERF_COUNT_SW_TASK_CLOCK;
             break;
-        case COUNTER_ALIGNMENT_FAULTS:
+        case RAW_ALIGNMENT_FAULTS:
             pea.type = PERF_TYPE_SOFTWARE;
             pea.config = PERF_COUNT_SW_ALIGNMENT_FAULTS;
             break;
@@ -197,7 +197,7 @@ typedef struct perf_result {
     struct {
         uint64_t value;
         uint64_t id;
-    } values[MAX_ACTIVE_COUNTERS];
+    } values[MAX_ACTIVE_PERF_COUNTERS];
 } perf_result_t;
 
 static void store_perf_results(batch_data_t *batch_data,
@@ -229,9 +229,9 @@ int bench_perf_event_open(batch_conf_t batch_conf,
                           batch_data_t *batch_data,
                           void (*workload)(void))
 {
-    struct perf_event_attr attrs[MAX_ACTIVE_COUNTERS];
-    int                    perf_ctr_fds[MAX_ACTIVE_COUNTERS];
-    uint64_t               perf_ctr_ids[MAX_ACTIVE_COUNTERS];
+    struct perf_event_attr attrs[MAX_ACTIVE_PERF_COUNTERS];
+    int                    perf_ctr_fds[MAX_ACTIVE_PERF_COUNTERS];
+    uint64_t               perf_ctr_ids[MAX_ACTIVE_PERF_COUNTERS];
 
     int n_counters = metric_grps[batch_conf.metric_grp_id].n_counters;
 
