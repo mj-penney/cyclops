@@ -213,6 +213,26 @@ const metric_t metrics[N_METRICS] = {
 const metric_grp_t metric_grps[N_METRIC_GRPS] = {
 
     {
+        .name = "TEST",
+        .type = METRIC_GRP_TYPE_PERF,
+        .n_metrics = 11,
+        .metrics = (const metric_t *const[]){
+            &metrics[METRIC_CPU_CYCLES],
+            &metrics[METRIC_REF_CPU_CYCLES],
+            &metrics[METRIC_INSTRUCTIONS],
+            &metrics[METRIC_LLC_READ_ACCESSES],
+            &metrics[METRIC_LLC_READ_MISSES],
+            &metrics[METRIC_BRANCH_INSTRUCTIONS],
+            &metrics[METRIC_BRANCH_MISPREDICTIONS],
+            &metrics[METRIC_DTLB_READ_ACCESSES],
+            &metrics[METRIC_DTLB_READ_MISSES],
+
+            &metrics[METRIC_INSTRUCTIONS_PER_CYCLE],
+            &metrics[METRIC_CYCLES_PER_INSTRUCTION],
+        },
+    },
+
+    {
         .name = "IPC",
         .type = METRIC_GRP_TYPE_PERF,
         .n_metrics = 5,

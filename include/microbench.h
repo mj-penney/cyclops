@@ -2,7 +2,7 @@
 #define MICROBENCH_H
 
 #define MAX_BATCH_RUNS 100
-#define MAX_PERF_COUNTERS 4
-#define MAX_PERF_RATIOS 5
+#define MAX_PERF_COUNTERS 15
+#define MAX_PERF_RATIOS 15
 
 #endif

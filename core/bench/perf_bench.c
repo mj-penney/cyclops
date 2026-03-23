@@ -15,7 +15,7 @@
 #include "../../include/bench.h"
 #include "./internal.h"
 
-static struct perf_event_attr create_perf_config(int metric, int is_leader)
+static struct perf_event_attr create_perf_config(int metric)
 {
     struct perf_event_attr pea;
 
@@ -151,8 +151,8 @@ static struct perf_event_attr create_perf_config(int metric, int is_leader)
     }
     pea.size = sizeof(struct perf_event_attr);
     pea.disabled = 1;
-    if (is_leader)
-        pea.pinned = 1;
+    //if (is_leader)
+    //    pea.pinned = 1;
     pea.exclude_kernel = 1;
     pea.exclude_hv = 1;
     pea.exclude_idle = 1;
@@ -204,13 +204,12 @@ typedef struct perf_result {
 } perf_result_t;
 
 static perf_result_t *calc_run_delta(perf_result_t *start_result,
-                                     perf_result_t *end_result,
-                                     int n_perf_counters)
+                                     perf_result_t *end_result)
 {
     end_result->time_enabled -= start_result->time_enabled;
     end_result->time_running -= start_result->time_running;
 
-    for (int i = 0; i < n_perf_counters; i++) {
+    for (uint64_t i = 0; i < end_result->nr; i++) {
         end_result->values[i].value -= start_result->values[i].value;
     }
 
@@ -226,17 +225,27 @@ static void store_perf_results(batch_data_t *batch_data,
     for (unsigned long long run = 0; run < batch_runs; run++) {
 
         /* verify that the kernel did not reorder the counters */
-        for (int i = 0; i < batch_data->n_perf_counters; i++) {
+        for (uint64_t i = 0; i < perf_end_results[run].nr; i++) {
             assert(perf_start_results[run].values[i].id == perf_ctr_ids[i]);
             assert(perf_end_results[run].values[i].id == perf_ctr_ids[i]);
         }
 
         perf_result_t *pr = calc_run_delta(&perf_start_results[run],
-                                                  &perf_end_results[run],
-                                                  batch_data->n_perf_counters);
+                                           &perf_end_results[run]);
 
         batch_data->time_enabled.run_vals[run] = pr->time_enabled;
         batch_data->time_running.run_vals[run] = pr->time_running;
+
+        if (pr->time_running == 0) {
+            fprintf(stderr,
+                    "Time running is 0 - the kernel was probably "
+                    "unable to schedule the perf event counter group\n");
+            exit(1);
+        }
+
+        if (pr->time_running != pr->time_enabled) {
+            fprintf(stdout, "Multiplexing occured on run %llu\n", run);
+        }
 
         double scaling = (double)pr->time_enabled / pr->time_running;
 
@@ -265,14 +274,8 @@ int bench_perf_event_open(batch_conf_t batch_conf,
     }
 
     for (int i = 0; i < batch_data->n_perf_counters; i++) {
-
-        int is_leader = 0;
-        if (i == 0) {
-            is_leader = 1;
-        }
-
         int metric_id = batch_data->perf_counters[i].metric->id;
-        attrs[i] = create_perf_config(metric_id, is_leader);
+        attrs[i] = create_perf_config(metric_id);
     }
 
     pin_thread();

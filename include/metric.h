@@ -84,6 +84,7 @@ typedef struct metric_grp {
 } metric_grp_t;
 
 enum {
+    METRIC_GRP_TEST,
     METRIC_GRP_IPC,
     METRIC_GRP_LLC_READS,
     METRIC_GRP_L1D_READS,
