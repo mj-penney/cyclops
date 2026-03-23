@@ -3,48 +3,13 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "../include/batch.h"
-#include "../include/bench.h"
-#include "../include/workload.h"
-#include "../include/data_processing.h"
-#include "../include/report.h"
+#include "../../include/batch.h"
+#include "../../include/bench.h"
+#include "../../include/workload.h"
+#include "../../include/data_processing.h"
+#include "../../include/report.h"
 
-int init_batch_conf(batch_conf_t *batch_conf, unsigned long long warmup_runs,
-                                              unsigned long long batch_runs,
-                                              workload_t *wl,
-                                              const metric_grp_t *mg)
-{
-    if (batch_runs < 1 || batch_runs > MAX_BATCH_RUNS) {
-        batch_runs = 100;
-    }
-
-    batch_conf->warmup_runs   = warmup_runs;
-    batch_conf->batch_runs    = batch_runs;
-    batch_conf->wl            = wl;
-    batch_conf->mg            = mg;
-
-    return 0;
-}
-
-static uint64_t *alloc_uint64_array(unsigned long long length)
-{
-    uint64_t *array = calloc(length, sizeof(uint64_t));
-    if (!array) {
-        perror("Failed to allocate uint64 array");
-        exit(1);
-    }
-    return array;
-}
-
-static double *alloc_double_array(unsigned long long length)
-{
-    double *array = calloc(length, sizeof(double));
-    if (!array) {
-        perror("Failed to allocate double array");
-        exit(1);
-    }
-    return array;
-}
+#include "./internal.h"
 
 static batch_data_t *init_perf_batch_data(batch_conf_t batch_cfg)
 {
@@ -123,29 +88,6 @@ static void destroy_perf_batch_data(batch_data_t *batch_data)
     batch_data = NULL;
 }
 
-static batch_data_t *init_timer_batch_data(batch_conf_t batch_cfg)
-{
-    batch_data_t *data = calloc(1, sizeof(batch_data_t));
-    if (!data) {
-        perror("Failed to allocate memory for batch data struct");
-        exit(1);
-    }
-
-    data->timer.run_vals = alloc_uint64_array(batch_cfg.batch_runs);
-    data->timer.metric = batch_cfg.mg->metrics[0];
-
-    return data;
-}
-
-static void destroy_timer_batch_data(batch_data_t *batch_data)
-{
-    free(batch_data->timer.run_vals);
-    batch_data->timer.run_vals = NULL;
-
-    free(batch_data);
-    batch_data = NULL;
-}
-
 static void process_perf_counter_data(batch_conf_t batch_conf,
                                       batch_data_t *batch_data)
 {
@@ -203,68 +145,24 @@ static void process_perf_ratio_data(batch_conf_t batch_cfg,
     }
 }
 
-static void process_timer_batch(batch_conf_t batch_conf,
-                         batch_data_t *batch_data)
-{
-    uint64_agg_t agg;
-    int batch_runs = batch_conf.batch_runs;
-
-    agg = aggregate_uint64(batch_data->timer.run_vals, batch_runs);
-    batch_data->timer.agg = agg;
-}
-
-static void process_perf_batch(batch_conf_t batch_conf,
-                              batch_data_t *batch_data)
-{
-    process_perf_counter_data(batch_conf, batch_data);
-    process_perf_ratio_data(batch_conf, batch_data);
-}
-
-void run_batch(batch_conf_t batch_conf)
+void run_perf_batch(batch_conf_t batch_conf)
 {
 
     batch_data_t *batch_data;
     workload_t *wl = batch_conf.wl;
-    const metric_grp_t *mg = batch_conf.mg;
 
-    if (mg->type == METRIC_GRP_TYPE_TIMER) {
-        batch_data = init_timer_batch_data(batch_conf);
-    } else {
-        batch_data = init_perf_batch_data(batch_conf);
-    }
+    batch_data = init_perf_batch_data(batch_conf);
 
+    // TODO: move this to a function in the bench subsystem
     wl->init(wl);
-
-    if (mg->type == METRIC_GRP_TYPE_TIMER) {
-        bench_timer(batch_conf, batch_data, wl->workload);
-    } else {
-        bench_perf_event_open(batch_conf, batch_data, wl->workload);
-    }
-
+    bench_perf_event_open(batch_conf, batch_data, wl->workload);
     wl->clean();
 
-    if (mg->type == METRIC_GRP_TYPE_TIMER) {
-        process_timer_batch(batch_conf, batch_data);
-    } else {
-        process_perf_batch(batch_conf, batch_data);
-    }
+    process_perf_counter_data(batch_conf, batch_data);
+    process_perf_ratio_data(batch_conf, batch_data);
 
-    if (mg->type == METRIC_GRP_TYPE_TIMER) {
-        timer_batch_to_csv(batch_conf, batch_data);
-    } else {
-        perf_batch_to_csv(batch_conf, batch_data);
-    }
+    perf_batch_to_csv(batch_conf, batch_data);
+    run_perf_report(batch_conf, batch_data);
 
-    if (mg->type == METRIC_GRP_TYPE_TIMER) {
-        // TODO: implement run_timer_report(batch_conf, batch_data);
-    } else {
-        run_perf_report(batch_conf, batch_data);
-    }
-
-
-    if (mg->type == METRIC_GRP_TYPE_TIMER) {
-        destroy_timer_batch_data(batch_data);
-    } else {
-        destroy_perf_batch_data(batch_data);
-    }
+    destroy_perf_batch_data(batch_data);
 }

@@ -31,6 +31,7 @@ typedef struct {
     uint64_agg_t agg;
 } timer_data_t;
 
+// TODO: split into perf_batch_data and timer_batch_data
 typedef struct batch_data {
 
     /* these two are always active for perf batches */
@@ -46,11 +47,9 @@ typedef struct batch_data {
     timer_data_t timer;
 } batch_data_t;
 
-int init_batch_conf(batch_conf_t *batch_conf, unsigned long long warmup_runs,
-                                              unsigned long long batch_runs,
-                                              workload_t *wl,
-                                              const metric_grp_t *mg);
-
-void run_batch(batch_conf_t batch_conf);
+void run_batch(unsigned long long warmup_runs,
+               unsigned long long batch_runs,
+               workload_t *wl,
+               const metric_grp_t *mg);
 
 #endif

@@ -98,9 +98,7 @@ int main(int argc, char *argv[])
         wl_set_param(wl, wl_param_keys[i], wl_param_args[i]);
     }
 
-    batch_conf_t batch_conf;
-    init_batch_conf(&batch_conf, warmup_runs, batch_runs, wl, mg);
-    run_batch(batch_conf);
+    run_batch(warmup_runs, batch_runs, wl, mg);
 
     return 0;
 }

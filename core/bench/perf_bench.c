@@ -12,7 +12,8 @@
 #include <assert.h>
 #include <errno.h>
 
-#include "../include/bench.h"
+#include "../../include/bench.h"
+#include "./internal.h"
 
 static struct perf_event_attr create_perf_config(int metric, int is_leader)
 {

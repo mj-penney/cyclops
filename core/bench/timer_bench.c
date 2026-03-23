@@ -12,7 +12,8 @@
 #include <assert.h>
 #include <errno.h>
 
-#include "../include/bench.h"
+#include "../../include/bench.h"
+#include "./internal.h"
 
 static uint64_t rdtscp()
 {
