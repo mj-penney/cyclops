@@ -421,7 +421,7 @@ void print_metric_grp_guide(void)
         printf("  %s:\n", metric_grp.name);
 
         if (metric_grp.type == METRIC_GRP_TYPE_TIMER) {
-            printf("    Raw:  %s", metric_grp.metrics[0]->name);
+            printf("    Raw:  %s\n\n", metric_grp.metrics[0]->name);
             continue;
         }
 
