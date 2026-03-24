@@ -150,7 +150,7 @@ static struct perf_event_attr create_perf_config(int metric)
             break;
     }
     pea.size = sizeof(struct perf_event_attr);
-    pea.disabled = 1;
+    pea.disabled = 0;
     //if (is_leader)
     //    pea.pinned = 1;
     pea.exclude_kernel = 1;
