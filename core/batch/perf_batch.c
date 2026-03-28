@@ -11,7 +11,7 @@
 
 #include "./internal.h"
 
-static batch_data_t *init_perf_batch_data(batch_conf_t batch_cfg)
+static batch_data_t *init_perf_batch_data(batch_conf_t *cfg)
 {
     batch_data_t *data;
     if (!(data = calloc(1, sizeof(batch_data_t)))) {
@@ -19,15 +19,15 @@ static batch_data_t *init_perf_batch_data(batch_conf_t batch_cfg)
         exit(1);
     }
 
-    data->time_enabled.run_vals = alloc_uint64_array(batch_cfg.batch_runs);
-    data->time_running.run_vals = alloc_uint64_array(batch_cfg.batch_runs);
+    data->time_enabled.run_vals = alloc_uint64_array(cfg->batch_runs);
+    data->time_running.run_vals = alloc_uint64_array(cfg->batch_runs);
 
     const metric_t *counter_metric_buff[MAX_PERF_COUNTERS];
     const metric_t *ratio_metric_buff[MAX_PERF_RATIOS];
 
-    mg_list_metrics_by_type(batch_cfg.mg, METRIC_TYPE_PERF_COUNTER,
+    mg_list_metrics_by_type(cfg->mg, METRIC_TYPE_PERF_COUNTER,
             MAX_PERF_COUNTERS, counter_metric_buff, &data->n_perf_counters);
-    mg_list_metrics_by_type(batch_cfg.mg, METRIC_TYPE_PERF_RATIO,
+    mg_list_metrics_by_type(cfg->mg, METRIC_TYPE_PERF_RATIO,
             MAX_PERF_RATIOS, ratio_metric_buff, &data->n_perf_ratios);
 
     if (!data->n_perf_counters) {
@@ -50,14 +50,12 @@ static batch_data_t *init_perf_batch_data(batch_conf_t batch_cfg)
     }
 
     for (int i = 0; i < data->n_perf_counters; i++) {
-        data->perf_counters[i].run_vals = alloc_double_array(
-                                                        batch_cfg.batch_runs);
+        data->perf_counters[i].run_vals = alloc_double_array(cfg->batch_runs);
         data->perf_counters[i].metric = counter_metric_buff[i];
     }
 
     for (int i = 0; i < data->n_perf_ratios; i++) {
-        data->perf_ratios[i].run_vals = alloc_double_array(
-                                                        batch_cfg.batch_runs);
+        data->perf_ratios[i].run_vals = alloc_double_array(cfg->batch_runs);
         data->perf_ratios[i].metric = ratio_metric_buff[i];
     }
 
@@ -88,11 +86,11 @@ static void destroy_perf_batch_data(batch_data_t *batch_data)
     batch_data = NULL;
 }
 
-static void process_perf_counter_data(batch_conf_t batch_conf,
+static void process_perf_counter_data(batch_conf_t *cfg,
                                       batch_data_t *batch_data)
 {
     double_agg_t agg;
-    int batch_runs = batch_conf.batch_runs;
+    int batch_runs = cfg->batch_runs;
 
     for (int i = 0; i < batch_data->n_perf_counters; i++) {
         agg = aggregate_double(batch_data->perf_counters[i].run_vals,
@@ -101,7 +99,7 @@ static void process_perf_counter_data(batch_conf_t batch_conf,
     }
 }
 
-static void process_perf_ratio_data(batch_conf_t cfg,
+static void process_perf_ratio_data(batch_conf_t *cfg,
                                     batch_data_t *batch_data)
 {
     for (int i = 0; i < batch_data->n_perf_ratios; i++) {
@@ -143,30 +141,30 @@ static void process_perf_ratio_data(batch_conf_t cfg,
         calc_ratios(batch_data->perf_ratios[i].run_vals,
                     numerators,
                     denominators,
-                    cfg.batch_runs);
+                    cfg->batch_runs);
 
-        ratio->agg = aggregate_double(ratio->run_vals, cfg.batch_runs);
+        ratio->agg = aggregate_double(ratio->run_vals, cfg->batch_runs);
     }
 }
 
-void run_perf_batch(batch_conf_t batch_conf)
+void run_perf_batch(batch_conf_t *cfg)
 {
 
     batch_data_t *batch_data;
-    workload_t *wl = batch_conf.wl;
+    workload_t *wl = cfg->wl;
 
-    batch_data = init_perf_batch_data(batch_conf);
+    batch_data = init_perf_batch_data(cfg);
 
     // TODO: move this to a function in the bench subsystem
     wl->init(wl);
-    bench_perf_event_open(batch_conf, batch_data, wl->workload);
+    bench_perf_event_open(cfg, batch_data, wl->workload);
     wl->clean();
 
-    process_perf_counter_data(batch_conf, batch_data);
-    process_perf_ratio_data(batch_conf, batch_data);
+    process_perf_counter_data(cfg, batch_data);
+    process_perf_ratio_data(cfg, batch_data);
 
-    perf_batch_to_csv(batch_conf, batch_data);
-    run_perf_report(batch_conf, batch_data);
+    perf_batch_to_csv(cfg, batch_data);
+    run_perf_report(cfg, batch_data);
 
     destroy_perf_batch_data(batch_data);
 }

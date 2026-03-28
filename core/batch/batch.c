@@ -63,9 +63,9 @@ void run_batch(unsigned long long warmup_runs,
 
     // TODO: pass batch config pointer rather than passing by value
     if (mg->type == METRIC_GRP_TYPE_TIMER) {
-        run_timer_batch(*cfg);
+        run_timer_batch(cfg);
     } else {
-        run_perf_batch(*cfg);
+        run_perf_batch(cfg);
     }
 
     free(cfg);

@@ -76,17 +76,17 @@ static void print_table_column_headers()
     putchar('\n');
 }
 
-static void print_batch_info(batch_conf_t batch_conf)
+static void print_batch_info(batch_conf_t *cfg)
 {
-    printf("    Warmup runs: %llu\n", batch_conf.warmup_runs);
-    printf("    Batch runs:  %llu\n", batch_conf.batch_runs);
+    printf("    Warmup runs: %llu\n", cfg->warmup_runs);
+    printf("    Batch runs:  %llu\n", cfg->batch_runs);
     putchar('\n');
 }
 
-void run_perf_report(batch_conf_t batch_conf, batch_data_t *batch_data)
+void run_perf_report(batch_conf_t *cfg, batch_data_t *batch_data)
 {
     printf("\n");
-    print_batch_info(batch_conf);
+    print_batch_info(cfg);
     print_table_column_headers();
 
     for (int i = 0; i < batch_data->n_perf_counters; i++) {
@@ -100,14 +100,14 @@ void run_perf_report(batch_conf_t batch_conf, batch_data_t *batch_data)
     printf("\n");
 }
 
-static void write_batch_metadata(FILE *file, batch_conf_t batch_conf)
+static void write_batch_metadata(FILE *file, batch_conf_t *cfg)
 {
-    fprintf(file, "#workload=%s\n", batch_conf.wl->name);
-    fprintf(file, "#metric-group=%s\n", batch_conf.mg->name);
-    fprintf(file, "#warmup-runs=%llu\n", batch_conf.warmup_runs);
-    fprintf(file, "#batch-runs=%llu\n", batch_conf.batch_runs);
+    fprintf(file, "#workload=%s\n", cfg->wl->name);
+    fprintf(file, "#metric-group=%s\n", cfg->mg->name);
+    fprintf(file, "#warmup-runs=%llu\n", cfg->warmup_runs);
+    fprintf(file, "#batch-runs=%llu\n", cfg->batch_runs);
 
-    workload_t *wl = batch_conf.wl;
+    workload_t *wl = cfg->wl;
     if (!wl->params) {
         return;
     }
@@ -118,7 +118,7 @@ static void write_batch_metadata(FILE *file, batch_conf_t batch_conf)
     }
 }
 
-void timer_batch_to_csv(batch_conf_t batch_conf, batch_data_t *batch_data)
+void timer_batch_to_csv(batch_conf_t *cfg, batch_data_t *batch_data)
 {
     FILE *file = fopen("batch.csv", "w");
     if (!file) {
@@ -126,18 +126,18 @@ void timer_batch_to_csv(batch_conf_t batch_conf, batch_data_t *batch_data)
         exit(1);
     }
 
-    write_batch_metadata(file, batch_conf);
+    write_batch_metadata(file, cfg);
 
     fprintf(file, "%s,\n", batch_data->timer.metric->name);
 
-    for (unsigned long long r = 0; r < batch_conf.batch_runs; r++) {
+    for (unsigned long long r = 0; r < cfg->batch_runs; r++) {
         fprintf(file, "%ld,\n", batch_data->timer.run_vals[r]);
     }
 
     fclose(file);
 }
 
-void perf_batch_to_csv(batch_conf_t batch_conf, batch_data_t *batch_data)
+void perf_batch_to_csv(batch_conf_t *cfg, batch_data_t *batch_data)
 {
     FILE *file = fopen("batch.csv", "w");
     if (!file) {
@@ -145,7 +145,7 @@ void perf_batch_to_csv(batch_conf_t batch_conf, batch_data_t *batch_data)
         exit(1);
     }
 
-    write_batch_metadata(file, batch_conf);
+    write_batch_metadata(file, cfg);
 
     fputs("TIME_ENABLED,", file);
     fputs("TIME_RUNNING,", file);
@@ -160,7 +160,7 @@ void perf_batch_to_csv(batch_conf_t batch_conf, batch_data_t *batch_data)
 
     fputc('\n', file);
 
-    for (unsigned long long i = 0; i < batch_conf.batch_runs; i++) {
+    for (unsigned long long i = 0; i < cfg->batch_runs; i++) {
         fprintf(file, "%ld,", batch_data->time_enabled.run_vals[i]);
         fprintf(file, "%ld,", batch_data->time_running.run_vals[i]);
 

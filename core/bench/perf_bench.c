@@ -256,7 +256,7 @@ static void store_perf_results(batch_data_t *batch_data,
     }
 }
 
-int bench_perf_event_open(batch_conf_t batch_conf,
+int bench_perf_event_open(batch_conf_t *batch_cfg,
                           batch_data_t *batch_data,
                           void (*workload)(void))
 {
@@ -264,9 +264,9 @@ int bench_perf_event_open(batch_conf_t batch_conf,
     int                    perf_ctr_fds[MAX_PERF_COUNTERS];
     uint64_t               perf_ctr_ids[MAX_PERF_COUNTERS];
 
-    perf_result_t *perf_start_results = calloc(batch_conf.batch_runs,
+    perf_result_t *perf_start_results = calloc(batch_cfg->batch_runs,
                                                sizeof(perf_result_t));
-    perf_result_t *perf_end_results = calloc(batch_conf.batch_runs,
+    perf_result_t *perf_end_results = calloc(batch_cfg->batch_runs,
                                              sizeof(perf_result_t));
     if (!perf_start_results || !perf_end_results) {
         perror("Failed to allocate buffer for perf results");
@@ -283,7 +283,7 @@ int bench_perf_event_open(batch_conf_t batch_conf,
     open_perf_counters(attrs, perf_ctr_fds, perf_ctr_ids,
                                                 batch_data->n_perf_counters);
 
-    for (unsigned long long i = 0; i < batch_conf.warmup_runs; i++) {
+    for (unsigned long long i = 0; i < batch_cfg->warmup_runs; i++) {
         workload();
     }
 
@@ -292,7 +292,7 @@ int bench_perf_event_open(batch_conf_t batch_conf,
      * Keep it as clean and minimal as possible
      * to reduce noise.
      */
-    for (unsigned long long run = 0; run < batch_conf.batch_runs; run++) {
+    for (unsigned long long run = 0; run < batch_cfg->batch_runs; run++) {
 
         read(perf_ctr_fds[0], &perf_start_results[run], sizeof(perf_result_t));
 
@@ -313,7 +313,7 @@ int bench_perf_event_open(batch_conf_t batch_conf,
                        perf_start_results,
                        perf_end_results,
                        perf_ctr_ids,
-                       batch_conf.batch_runs);
+                       batch_cfg->batch_runs);
 
     free(perf_start_results);
     free(perf_end_results);

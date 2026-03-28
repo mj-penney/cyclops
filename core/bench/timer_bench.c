@@ -27,18 +27,18 @@ static uint64_t rdtscp()
  * This is just a placeholder for now.
  * Might make this function usable at some point.
  */
-int bench_timer(batch_conf_t batch_conf, batch_data_t *batch_data,
-                                          void (*workload)(void))
+int bench_timer(batch_conf_t *batch_cfg, batch_data_t *batch_data,
+                                         void (*workload)(void))
 {
     uint64_t start, end;
 
     pin_thread();
 
-    for (unsigned long long i = 0; i < batch_conf.warmup_runs; i++) {
+    for (unsigned long long i = 0; i < batch_cfg->warmup_runs; i++) {
         workload();
     }
 
-    for (unsigned long long i = 0; i < batch_conf.batch_runs; i++) {
+    for (unsigned long long i = 0; i < batch_cfg->batch_runs; i++) {
         start = rdtscp();
         workload();
         end = rdtscp();
