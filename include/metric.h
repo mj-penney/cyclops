@@ -65,6 +65,7 @@ typedef enum {
 typedef enum {
     METRIC_BE_PERF,
     METRIC_BE_CPU_INSTRUCTION,
+    N_METRIC_BACKENDS,
 } metric_backend_t;
 
 typedef struct {

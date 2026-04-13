@@ -158,17 +158,11 @@ void run_batch(unsigned long long warmup_runs,
 {
     batch_conf_t *cfg = init_batch_conf(warmup_runs, batch_runs, wl, mg);
     batch_data_t *batch_data = init_batch_data(cfg);
+    const backend_t *backend = get_backend(mg->backend);
 
-    cfg->wl->init(cfg->wl);
-
-    if (cfg->mg->backend == METRIC_BE_PERF) {
-        bench_perf_event_open(cfg, batch_data, cfg->wl->workload);
-    } else if (cfg->mg->backend == METRIC_BE_CPU_INSTRUCTION) {
-        bench_func_t bench_func = get_timer_bench_func(cfg->mg);
-        bench_func(cfg, batch_data, cfg->wl->workload);
-    }
-
-    cfg->wl->clean();
+    wl->init(wl);
+    backend->bench_func(cfg, batch_data, wl->workload);
+    wl->clean();
 
     process_perf_counter_data(cfg, batch_data);
     process_perf_ratio_data(cfg, batch_data);

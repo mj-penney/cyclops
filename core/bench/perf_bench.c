@@ -253,9 +253,9 @@ static void store_perf_results(batch_data_t *batch_data,
     }
 }
 
-int bench_perf_event_open(batch_conf_t *batch_cfg,
-                          batch_data_t *batch_data,
-                          void (*workload)(void))
+void run_perf_be(batch_conf_t *batch_cfg,
+                 batch_data_t *batch_data,
+                 void (*workload)(void))
 {
     struct perf_event_attr attrs[MAX_PERF_COUNTERS];
     int                    perf_ctr_fds[MAX_PERF_COUNTERS];
@@ -314,6 +314,4 @@ int bench_perf_event_open(batch_conf_t *batch_cfg,
 
     free(perf_start_results);
     free(perf_end_results);
-
-    return 0;
 }

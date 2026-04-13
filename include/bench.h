@@ -10,11 +10,22 @@ typedef void (*bench_func_t)(
     void (*)(void)
 );
 
-bench_func_t get_timer_bench_func(const metric_grp_t *mg);
+typedef struct {
+    metric_backend_t id;
+    bench_func_t bench_func;
+} backend_t;
 
+/*
+ * TODO: move thes two functions static to a specific backend.c file and
+ * only accessable from a backend_t object.
+ */
+void run_cpu_instruction_be(batch_conf_t *batch_cfg,
+                            batch_data_t *batch_data,
+                            void (*workload)(void));
+void run_perf_be(batch_conf_t *batch_cfg,
+                 batch_data_t *batch_data,
+                 void (*workload)(void));
 
-int bench_perf_event_open(batch_conf_t *batch_cfg,
-                          batch_data_t *batch_data,
-                          void (*workload)(void));
+const backend_t *get_backend(metric_backend_t id);
 
 #endif

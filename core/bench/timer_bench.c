@@ -48,25 +48,32 @@ static void bench_rdtscp(batch_conf_t *batch_cfg,
 
 #endif
 
-bench_func_t get_timer_bench_func(const metric_grp_t *mg)
+void run_cpu_instruction_be(batch_conf_t *batch_cfg,
+                            batch_data_t *batch_data,
+                            void (*workload)(void))
 {
+    const metric_grp_t *mg = batch_cfg->mg;
+    assert(mg != NULL);
+
     switch (mg->metrics[0]) {
 
         case METRIC_RDTSCP:
 #if defined(__x86_64__) || defined(__i386__) || defined(__amd64__)
-            return bench_rdtscp;
+            bench_rdtscp(batch_cfg, batch_data, workload);
 #else
             fprintf(stderr, "RDTSCP is x86-only\n");
             exit(1);
 #endif
+            break;
 
         case METRIC_ARM:
 #if defined(__aarch64__) || defined(__arm__)
             fprintf(stderr, "Arm timer not implemented yet\n");
 #else
             fprintf(stderr, "Arm counter is arm-only\n");
-#endif
             exit(1);
+#endif
+            break;
 
         default:
             exit(1);
