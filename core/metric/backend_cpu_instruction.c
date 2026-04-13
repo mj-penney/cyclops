@@ -48,7 +48,7 @@ static void bench_rdtscp(batch_conf_t *batch_cfg,
 
 #endif
 
-void run_cpu_instruction_be(batch_conf_t *batch_cfg,
+void run_be(batch_conf_t *batch_cfg,
                             batch_data_t *batch_data,
                             void (*workload)(void))
 {
@@ -79,3 +79,10 @@ void run_cpu_instruction_be(batch_conf_t *batch_cfg,
             exit(1);
     }
 }
+
+static backend_t be = {
+    .id = METRIC_BE_CPU_INSTRUCTION,
+    .bench_func = run_be,
+};
+
+REGISTER_BACKEND(&be)

@@ -1,17 +1,23 @@
+#include <stdlib.h>
+#include <stddef.h>
+
 #include "../../include/bench.h"
 
-static const backend_t backends[N_METRIC_BACKENDS] = {
-    [METRIC_BE_PERF] = {
-        .id = METRIC_BE_PERF,
-        .bench_func = run_perf_be,
-    },
-    [METRIC_BE_CPU_INSTRUCTION] = {
-        .id = METRIC_BE_CPU_INSTRUCTION,
-        .bench_func = run_cpu_instruction_be,
-    },
-};
+static backend_t **backends = NULL;
+static size_t n_backends = 0;
 
-const backend_t *get_backend(metric_backend_t id)
+void register_backend(backend_t *be)
 {
-    return &backends[id];
+    backends = realloc(backends, (n_backends + 1) * sizeof(*backends));
+    backends[n_backends++] = be;
+}
+
+backend_t *get_backend(metric_backend_t id)
+{
+    for (size_t i = 0; i < n_backends; i++) {
+        if (backends[i]->id == id) {
+            return backends[i];
+        }
+    }
+    return NULL;
 }

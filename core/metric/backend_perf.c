@@ -13,6 +13,7 @@
 #include <errno.h>
 
 #include "../../include/bench.h"
+#include "../../include/metric.h"
 #include "./backend_common.h"
 
 static struct perf_event_attr create_perf_config(int metric)
@@ -253,7 +254,7 @@ static void store_perf_results(batch_data_t *batch_data,
     }
 }
 
-void run_perf_be(batch_conf_t *batch_cfg,
+static void run_be(batch_conf_t *batch_cfg,
                  batch_data_t *batch_data,
                  void (*workload)(void))
 {
@@ -315,3 +316,10 @@ void run_perf_be(batch_conf_t *batch_cfg,
     free(perf_start_results);
     free(perf_end_results);
 }
+
+static backend_t be = {
+    .id = METRIC_BE_PERF,
+    .bench_func = run_be,
+};
+
+REGISTER_BACKEND(&be)
