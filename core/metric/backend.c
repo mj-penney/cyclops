@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-#include "../../include/bench.h"
+#include "../../include/metric.h"
+#include "./backend.h"
 
 static backend_t **backends = NULL;
 static size_t n_backends = 0;

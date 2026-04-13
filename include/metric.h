@@ -4,58 +4,7 @@
 #include <stdint.h>
 
 #include "./microbench.h"
-
-/*** PERF ***/
-
-typedef enum {
-
-    /* counters */
-
-    METRIC_CPU_CYCLES,
-    METRIC_REF_CPU_CYCLES,
-    METRIC_INSTRUCTIONS,
-    METRIC_LLC_READ_ACCESSES,
-    METRIC_LLC_READ_MISSES,
-    METRIC_L1D_READ_ACCESSES,
-    METRIC_L1D_READ_MISSES,
-    METRIC_L1I_READ_ACCESSES,
-    METRIC_L1I_READ_MISSES,
-    METRIC_DTLB_READ_ACCESSES,
-    METRIC_DTLB_READ_MISSES,
-    METRIC_ITLB_READ_ACCESSES,
-    METRIC_ITLB_READ_MISSES,
-    METRIC_BPU_READ_ACCESSES,
-    METRIC_BPU_READ_MISSES,
-    METRIC_BRANCH_INSTRUCTIONS,
-    METRIC_BRANCH_MISPREDICTIONS,
-    METRIC_STALLED_CYCLES_FRONTEND,
-    METRIC_STALLED_CYCLES_BACKEND,
-    METRIC_PAGE_FAULTS,
-    METRIC_PAGE_FAULTS_MAJ,
-    METRIC_PAGE_FAULTS_MIN,
-    METRIC_CPU_CLOCK_NS,
-    METRIC_TASK_CLOCK_NS,
-    METRIC_ALIGNMENT_FAULTS,
-
-    METRIC_RDTSCP,
-    METRIC_ARM,
-
-    /* ratios */
-
-    METRIC_INSTRUCTIONS_PER_CYCLE,
-    METRIC_CYCLES_PER_INSTRUCTION,
-    METRIC_LLC_READ_MISS_RATE,
-    METRIC_L1D_READ_MISS_RATE,
-    METRIC_L1I_READ_MISS_RATE,
-    METRIC_DTLB_READ_MISS_RATE,
-    METRIC_ITLB_READ_MISS_RATE,
-    METRIC_BPU_READ_MISS_RATE,
-    METRIC_BRANCH_MISPRED_RATE,
-    METRIC_FE_VS_BE_STALLS,
-
-    N_METRICS
-
-} metric_id_t;
+#include "./batch.h"
 
 typedef enum {
     METRIC_TYPE_RAW,
@@ -79,7 +28,7 @@ typedef struct {
 
 /*** METRIC GROUPS ***/
 
-typedef struct {
+typedef struct metric_grp {
     const char *name;
     metric_backend_t backend;
     int n_metrics;
@@ -96,5 +45,23 @@ int mg_n_raw(const metric_grp_t *mg);
 int mg_n_derived(const metric_grp_t *mg);
 
 void print_metric_grp_guide(void);
+
+/** METRIC BACKEND ***/
+
+typedef struct batch_conf batch_conf_t;
+typedef struct batch_data batch_data_t;
+
+typedef void (*bench_func_t)(
+    batch_conf_t *,
+    batch_data_t *,
+    void (*)(void)
+);
+
+typedef struct {
+    metric_backend_t id;
+    bench_func_t bench_func;
+} backend_t;
+
+backend_t *get_backend(metric_backend_t id);
 
 #endif

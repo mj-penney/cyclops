@@ -4,7 +4,7 @@
 #include <assert.h>
 
 #include "../include/batch.h"
-#include "../include/bench.h"
+#include "../include/metric.h"
 #include "../include/workload.h"
 #include "../include/data_processing.h"
 #include "../include/report.h"

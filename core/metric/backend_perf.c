@@ -12,8 +12,8 @@
 #include <assert.h>
 #include <errno.h>
 
-#include "../../include/bench.h"
 #include "../../include/metric.h"
+#include "./backend.h"
 #include "./backend_common.h"
 
 static struct perf_event_attr create_perf_config(int metric)

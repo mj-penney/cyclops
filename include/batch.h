@@ -6,6 +6,8 @@
 #include "./workload.h"
 #include "./data_processing.h"
 
+typedef struct metric_grp metric_grp_t;
+
 typedef struct batch_conf {
     unsigned long long warmup_runs;
     unsigned long long batch_runs;
@@ -19,7 +21,7 @@ typedef struct {
     double_agg_t agg;
 } metric_data_t;
 
-typedef struct {
+typedef struct batch_data {
 
     int n_raw;
     metric_data_t *raw_data;
