@@ -246,6 +246,7 @@ static void store_perf_results(batch_data_t *batch_data,
         }
 
         double scaling = (double)pr->time_enabled / pr->time_running;
+        batch_data->raw_data_scaling.run_vals[run] = scaling;
 
         for (unsigned int pr_idx = 0; pr_idx < pr->nr; pr_idx++) {
             double value = scaling * pr->values[pr_idx].value;

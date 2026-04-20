@@ -23,14 +23,14 @@ typedef struct {
 
 typedef struct batch_data {
 
+    metric_data_t raw_data_scaling;
+
     int n_raw;
     metric_data_t *raw_data;
 
     int n_derived;
     metric_data_t *derived_data;
 } batch_data_t;
-
-/*** TIMER ***/
 
 void run_batch(unsigned long long warmup_runs,
                unsigned long long batch_runs,

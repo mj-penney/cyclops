@@ -70,6 +70,8 @@ static batch_data_t *init_batch_data(batch_conf_t *cfg)
         }
     }
 
+    data->raw_data_scaling.run_vals = alloc_double_array(cfg->batch_runs);
+
     for (int i = 0; i < data->n_raw; i++) {
         data->raw_data[i].run_vals = alloc_double_array(cfg->batch_runs);
         data->raw_data[i].metric_id = mg_get_nth_raw_id(mg, i);
@@ -95,6 +97,9 @@ static void destroy_batch_data(batch_data_t *data)
         data->derived_data[i].run_vals = NULL;
     }
 
+    free(data->raw_data_scaling.run_vals);
+    data->raw_data_scaling.run_vals = NULL;
+
     free(data->raw_data);
     data->raw_data = NULL;
 
@@ -108,12 +113,12 @@ static void destroy_batch_data(batch_data_t *data)
 static void process_perf_counter_data(batch_conf_t *cfg,
                                       batch_data_t *batch_data)
 {
-    double_agg_t agg;
+    batch_data->raw_data_scaling.agg = aggregate_double(
+                    batch_data->raw_data_scaling.run_vals, cfg->batch_runs);
 
     for (int i = 0; i < batch_data->n_raw; i++) {
-        agg = aggregate_double(batch_data->raw_data[i].run_vals,
-                               cfg->batch_runs);
-        batch_data->raw_data[i].agg = agg;
+        batch_data->raw_data[i].agg = aggregate_double(
+                            batch_data->raw_data[i].run_vals, cfg->batch_runs);
     }
 }
 

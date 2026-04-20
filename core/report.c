@@ -70,6 +70,8 @@ void run_report(batch_conf_t *cfg, batch_data_t *batch_data)
     print_batch_info(cfg);
     print_table_column_headers();
 
+    print_double_agg_table_row(batch_data->raw_data_scaling.agg, "SCALING");
+
     for (int i = 0; i < batch_data->n_raw; i++) {
         const metric_t *m = get_metric_by_id(
                                             batch_data->raw_data[i].metric_id);
@@ -113,12 +115,15 @@ void batch_to_csv(batch_conf_t *cfg, batch_data_t *batch_data)
 
     write_batch_metadata(file, cfg);
 
+    /* raw data column names */
+    fprintf(file, "%s,", "SCALING");
     for (int i = 0; i < batch_data->n_raw; i++) {
         const metric_t *m = get_metric_by_id(
                                             batch_data->raw_data[i].metric_id);
         fprintf(file, "%s,", m->name);
     }
 
+    /* derived data column names */
     for (int i = 0; i < batch_data->n_derived; i++) {
         const metric_t *m = get_metric_by_id(
                                         batch_data->derived_data[i].metric_id);
@@ -128,6 +133,7 @@ void batch_to_csv(batch_conf_t *cfg, batch_data_t *batch_data)
     fputc('\n', file);
 
     for (unsigned long long r = 0; r < cfg->batch_runs; r++) {
+        fprintf(file, "%.6f,", batch_data->raw_data_scaling.run_vals[r]);
         for (int i = 0; i < batch_data->n_raw; i++) {
             fprintf(file, "%.6f,", batch_data->raw_data[i].run_vals[r]);
         }
