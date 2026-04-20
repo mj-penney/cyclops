@@ -11,14 +11,13 @@ UBSAN_CFLAGS = -O0 -g -Wall -Wextra -Wpedantic -std=gnu11 \
 CFLAGS ?= $(PROD_CFLAGS)
 
 CORE_SRCS=core/main.c \
-	core/bench/common.c \
-	core/bench/perf_bench.c \
-	core/bench/timer_bench.c \
-	core/batch/batch.c \
-	core/batch/perf_batch.c \
-	core/batch/timer_batch.c \
+	core/metric/frontend.c \
+	core/metric/backend.c \
+	core/metric/backend_common.c \
+	core/metric/backend_perf.c \
+	core/metric/backend_cpu_instruction.c \
+	core/batch.c \
 	core/data_processing.c \
-	core/metric.c \
 	core/report.c \
 	core/workload.c
 

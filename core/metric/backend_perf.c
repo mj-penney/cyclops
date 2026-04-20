@@ -12,8 +12,9 @@
 #include <assert.h>
 #include <errno.h>
 
-#include "../../include/bench.h"
-#include "./internal.h"
+#include "../../include/metric.h"
+#include "./backend.h"
+#include "./backend_common.h"
 
 static struct perf_event_attr create_perf_config(int metric)
 {
@@ -22,127 +23,127 @@ static struct perf_event_attr create_perf_config(int metric)
     memset(&pea, 0, sizeof(struct perf_event_attr));
 
     switch (metric) {
-        case PC_ID_CPU_CYCLES:
+        case METRIC_CPU_CYCLES:
             pea.type = PERF_TYPE_HARDWARE;
             pea.config = PERF_COUNT_HW_CPU_CYCLES;
             break;
-        case PC_ID_REF_CPU_CYCLES:
+        case METRIC_REF_CPU_CYCLES:
             pea.type = PERF_TYPE_HARDWARE;
             pea.config = PERF_COUNT_HW_REF_CPU_CYCLES;
             break;
-        case PC_ID_INSTRUCTIONS:
+        case METRIC_INSTRUCTIONS:
             pea.type = PERF_TYPE_HARDWARE;
             pea.config = PERF_COUNT_HW_INSTRUCTIONS;
             break;
-        case PC_ID_LLC_READ_ACCESSES:
+        case METRIC_LLC_READ_ACCESSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_LL
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16);
             break;
-        case PC_ID_LLC_READ_MISSES:
+        case METRIC_LLC_READ_MISSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_LL
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_MISS << 16);
             break;
-        case PC_ID_L1D_READ_ACCESSES:
+        case METRIC_L1D_READ_ACCESSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_L1D
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16);
             break;
-        case PC_ID_L1D_READ_MISSES:
+        case METRIC_L1D_READ_MISSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_L1D
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_MISS << 16);
             break;
-        case PC_ID_L1I_READ_ACCESSES:
+        case METRIC_L1I_READ_ACCESSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_L1I
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16);
             break;
-        case PC_ID_L1I_READ_MISSES:
+        case METRIC_L1I_READ_MISSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_L1I
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_MISS << 16);
             break;
-        case PC_ID_DTLB_READ_ACCESSES:
+        case METRIC_DTLB_READ_ACCESSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_DTLB
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16);
             break;
-        case PC_ID_DTLB_READ_MISSES:
+        case METRIC_DTLB_READ_MISSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_DTLB
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_MISS << 16);
             break;
-        case PC_ID_ITLB_READ_ACCESSES:
+        case METRIC_ITLB_READ_ACCESSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_ITLB
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16);
             break;
-        case PC_ID_ITLB_READ_MISSES:
+        case METRIC_ITLB_READ_MISSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_ITLB
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_MISS << 16);
             break;
-        case PC_ID_BPU_READ_ACCESSES:
+        case METRIC_BPU_READ_ACCESSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_BPU
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16);
             break;
-        case PC_ID_BPU_READ_MISSES:
+        case METRIC_BPU_READ_MISSES:
             pea.type = PERF_TYPE_HW_CACHE;
             pea.config = PERF_COUNT_HW_CACHE_BPU
                 | (PERF_COUNT_HW_CACHE_OP_READ << 8)
                 | (PERF_COUNT_HW_CACHE_RESULT_MISS << 16);
             break;
-        case PC_ID_BRANCH_INSTRUCTIONS:
+        case METRIC_BRANCH_INSTRUCTIONS:
             pea.type = PERF_TYPE_HARDWARE;
             pea.config = PERF_COUNT_HW_BRANCH_INSTRUCTIONS;
             break;
-        case PC_ID_BRANCH_MISPREDICTIONS:
+        case METRIC_BRANCH_MISPREDICTIONS:
             pea.type = PERF_TYPE_HARDWARE;
             pea.config = PERF_COUNT_HW_BRANCH_MISSES;
             break;
-        case PC_ID_STALLED_CYCLES_FRONTEND:
+        case METRIC_STALLED_CYCLES_FRONTEND:
             pea.type = PERF_TYPE_HARDWARE;
             pea.config = PERF_COUNT_HW_STALLED_CYCLES_FRONTEND;
             break;
-        case PC_ID_STALLED_CYCLES_BACKEND:
+        case METRIC_STALLED_CYCLES_BACKEND:
             pea.type = PERF_TYPE_HARDWARE;
             pea.config = PERF_COUNT_HW_STALLED_CYCLES_BACKEND;
             break;
-        case PC_ID_PAGE_FAULTS:
+        case METRIC_PAGE_FAULTS:
             pea.type = PERF_TYPE_SOFTWARE;
             pea.config = PERF_COUNT_SW_PAGE_FAULTS;
             break;
-        case PC_ID_PAGE_FAULTS_MAJ:
+        case METRIC_PAGE_FAULTS_MAJ:
             pea.type = PERF_TYPE_SOFTWARE;
             pea.config = PERF_COUNT_SW_PAGE_FAULTS_MAJ;
             break;
-        case PC_ID_PAGE_FAULTS_MIN:
+        case METRIC_PAGE_FAULTS_MIN:
             pea.type = PERF_TYPE_SOFTWARE;
             pea.config = PERF_COUNT_SW_PAGE_FAULTS_MIN;
             break;
-        case PC_ID_CPU_CLOCK_NS:
+        case METRIC_CPU_CLOCK_NS:
             pea.type = PERF_TYPE_SOFTWARE;
             pea.config = PERF_COUNT_SW_CPU_CLOCK;
             break;
-        case PC_ID_TASK_CLOCK_NS:
+        case METRIC_TASK_CLOCK_NS:
             pea.type = PERF_TYPE_SOFTWARE;
             pea.config = PERF_COUNT_SW_TASK_CLOCK;
             break;
-        case PC_ID_ALIGNMENT_FAULTS:
+        case METRIC_ALIGNMENT_FAULTS:
             pea.type = PERF_TYPE_SOFTWARE;
             pea.config = PERF_COUNT_SW_ALIGNMENT_FAULTS;
             break;
@@ -216,7 +217,7 @@ static perf_result_t *calc_run_delta(perf_result_t *start_result,
     return end_result;
 }
 
-static void store_perf_results(perf_batch_t *batch_data,
+static void store_perf_results(batch_data_t *batch_data,
                                perf_result_t perf_start_results[],
                                perf_result_t perf_end_results[],
                                uint64_t perf_ctr_ids[],
@@ -233,9 +234,6 @@ static void store_perf_results(perf_batch_t *batch_data,
         perf_result_t *pr = calc_run_delta(&perf_start_results[run],
                                            &perf_end_results[run]);
 
-        batch_data->time_enabled.run_vals[run] = pr->time_enabled;
-        batch_data->time_running.run_vals[run] = pr->time_running;
-
         if (pr->time_running == 0) {
             fprintf(stderr,
                     "Time running is 0 - the kernel was probably "
@@ -251,14 +249,14 @@ static void store_perf_results(perf_batch_t *batch_data,
 
         for (unsigned int pr_idx = 0; pr_idx < pr->nr; pr_idx++) {
             double value = scaling * pr->values[pr_idx].value;
-            batch_data->perf_counters[pr_idx].run_vals[run] = value;
+            batch_data->raw_data[pr_idx].run_vals[run] = value;
         }
     }
 }
 
-int bench_perf_event_open(batch_conf_t *batch_cfg,
-                          perf_batch_t *batch_data,
-                          void (*workload)(void))
+static void run_be(batch_conf_t *batch_cfg,
+                 batch_data_t *batch_data,
+                 void (*workload)(void))
 {
     struct perf_event_attr attrs[MAX_PERF_COUNTERS];
     int                    perf_ctr_fds[MAX_PERF_COUNTERS];
@@ -273,15 +271,15 @@ int bench_perf_event_open(batch_conf_t *batch_cfg,
         exit(1);
     }
 
-    for (int i = 0; i < batch_data->n_perf_counters; i++) {
-        int metric_id = batch_data->perf_counters[i].metric->id;
+    for (int i = 0; i < batch_data->n_raw; i++) {
+        int metric_id = batch_data->raw_data[i].metric_id;
         attrs[i] = create_perf_config(metric_id);
     }
 
     pin_thread();
 
     open_perf_counters(attrs, perf_ctr_fds, perf_ctr_ids,
-                                                batch_data->n_perf_counters);
+                                                batch_data->n_raw);
 
     for (unsigned long long i = 0; i < batch_cfg->warmup_runs; i++) {
         workload();
@@ -303,7 +301,7 @@ int bench_perf_event_open(batch_conf_t *batch_cfg,
         read(perf_ctr_fds[0], &perf_end_results[run], sizeof(perf_result_t));
     }
 
-    for (int i = 0; i < batch_data->n_perf_counters; i++) {
+    for (int i = 0; i < batch_data->n_raw; i++) {
         if (close(perf_ctr_fds[i]) == -1) {
             exit(1);
         }
@@ -317,6 +315,11 @@ int bench_perf_event_open(batch_conf_t *batch_cfg,
 
     free(perf_start_results);
     free(perf_end_results);
-
-    return 0;
 }
+
+static metric_backend_t be = {
+    .id = METRIC_BE_PERF,
+    .bench_func = run_be,
+};
+
+REGISTER_BACKEND(&be)

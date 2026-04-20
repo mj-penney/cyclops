@@ -6,6 +6,8 @@
 #include "./workload.h"
 #include "./data_processing.h"
 
+typedef struct metric_grp metric_grp_t;
+
 typedef struct batch_conf {
     unsigned long long warmup_runs;
     unsigned long long batch_runs;
@@ -14,44 +16,21 @@ typedef struct batch_conf {
 } batch_conf_t;
 
 typedef struct {
-    uint64_t *run_vals;
-    uint64_agg_t agg;
-} perf_time_data_t;
-
-typedef struct {
-    const perf_counter_metric_t *metric;
+    metric_id_t metric_id;
     double *run_vals;
     double_agg_t agg;
-} perf_counter_data_t;
+} metric_data_t;
 
-typedef struct {
-    const perf_ratio_metric_t *metric;
-    double *run_vals;
-    double_agg_t agg;
-} perf_ratio_data_t;
+typedef struct batch_data {
 
-typedef struct {
+    int n_raw;
+    metric_data_t *raw_data;
 
-    perf_time_data_t time_enabled;
-    perf_time_data_t time_running;
-
-    int n_perf_counters;
-    perf_counter_data_t *perf_counters;
-
-    int n_perf_ratios;
-    perf_ratio_data_t *perf_ratios;
-} perf_batch_t;
+    int n_derived;
+    metric_data_t *derived_data;
+} batch_data_t;
 
 /*** TIMER ***/
-
-typedef struct {
-    uint64_t *run_vals;
-    uint64_agg_t agg;
-} timer_data_t;
-
-typedef struct {
-    timer_data_t timer;
-} timer_batch_t;
 
 void run_batch(unsigned long long warmup_runs,
                unsigned long long batch_runs,

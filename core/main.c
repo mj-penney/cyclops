@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     static struct option long_opts[] = {
         {"help", no_argument, 0, 'h'},
         {"workload", required_argument, 0, 'w'},
-        {"metric-grp", required_argument, 0, 'g'},
+        {"metric-grp", required_argument, 0, 'm'},
         {"batch-runs", required_argument, 0, 'r'},
         {"warmup-runs", required_argument, 0, 'u'},
         {"param", required_argument, 0, 'p'},
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     int opt;
     char *key;
     char *eq;
-    while ((opt = getopt_long(argc, argv, "hw:g:r:u:p:", long_opts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hw:m:r:u:p:", long_opts, NULL)) != -1) {
         switch (opt) {
             case 'h':
                 fputs(help_text, stdout);
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
             case 'w':
                 workload_str = optarg;
                 break;
-            case 'g':
+            case 'm':
                 metric_grp_str = optarg;
                 break;
             case 'r':

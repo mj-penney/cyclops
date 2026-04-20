@@ -23,26 +23,6 @@ static void print_table_cell_right_align(const char *text)
     printf("%s", cell_buf);
 }
 
-static void print_uint64_agg_table_row(uint64_agg_t agg, const char *name)
-{
-    char name_buf[32];
-    char min_buf[32];
-    char max_buf[32];
-    char median_buf[32];
-
-    snprintf(name_buf, sizeof(name_buf), "%s", name);
-    snprintf(min_buf, sizeof(min_buf), "%ld", agg.min);
-    snprintf(max_buf, sizeof(max_buf), "%ld", agg.max);
-    snprintf(median_buf, sizeof(median_buf), "%ld", agg.median);
-
-    print_table_cell_right_align(name_buf);
-    print_table_cell_right_align(min_buf);
-    print_table_cell_right_align(max_buf);
-    print_table_cell_right_align(median_buf);
-
-    printf("\n");
-}
-
 static void print_double_agg_table_row(double_agg_t agg, const char *name)
 {
     char name_buf[32];
@@ -84,32 +64,23 @@ static void print_batch_info(batch_conf_t *cfg)
     putchar('\n');
 }
 
-void run_perf_report(batch_conf_t *cfg, perf_batch_t *batch_data)
+void run_report(batch_conf_t *cfg, batch_data_t *batch_data)
 {
     printf("\n");
     print_batch_info(cfg);
     print_table_column_headers();
 
-    for (int i = 0; i < batch_data->n_perf_counters; i++) {
-        print_double_agg_table_row(batch_data->perf_counters[i].agg,
-                                   batch_data->perf_counters[i].metric->name);
+    for (int i = 0; i < batch_data->n_raw; i++) {
+        const metric_t *m = get_metric_by_id(
+                                            batch_data->raw_data[i].metric_id);
+        print_double_agg_table_row(batch_data->raw_data[i].agg, m->name);
     }
 
-    for (int i = 0; i < batch_data->n_perf_ratios; i++) {
-        print_double_agg_table_row(batch_data->perf_ratios[i].agg,
-                                   batch_data->perf_ratios[i].metric->name);
+    for (int i = 0; i < batch_data->n_derived; i++) {
+        const metric_t *m = get_metric_by_id(
+                                        batch_data->derived_data[i].metric_id);
+        print_double_agg_table_row(batch_data->derived_data[i].agg, m->name);
     }
-
-    printf("\n");
-}
-
-void run_timer_report(batch_conf_t *cfg, timer_batch_t *batch_data)
-{
-    printf("\n");
-    print_batch_info(cfg);
-    print_table_column_headers();
-
-    print_uint64_agg_table_row(batch_data->timer.agg, cfg->mg->name);
 
     printf("\n");
 }
@@ -132,7 +103,7 @@ static void write_batch_metadata(FILE *file, batch_conf_t *cfg)
     }
 }
 
-void timer_batch_to_csv(batch_conf_t *cfg, timer_batch_t *batch_data)
+void batch_to_csv(batch_conf_t *cfg, batch_data_t *batch_data)
 {
     FILE *file = fopen("batch.csv", "w");
     if (!file) {
@@ -142,48 +113,27 @@ void timer_batch_to_csv(batch_conf_t *cfg, timer_batch_t *batch_data)
 
     write_batch_metadata(file, cfg);
 
-    fprintf(file, "%s,\n", cfg->mg->name);
-
-    for (unsigned long long r = 0; r < cfg->batch_runs; r++) {
-        fprintf(file, "%ld,\n", batch_data->timer.run_vals[r]);
+    for (int i = 0; i < batch_data->n_raw; i++) {
+        const metric_t *m = get_metric_by_id(
+                                            batch_data->raw_data[i].metric_id);
+        fprintf(file, "%s,", m->name);
     }
 
-    fclose(file);
-}
-
-void perf_batch_to_csv(batch_conf_t *cfg, perf_batch_t *batch_data)
-{
-    FILE *file = fopen("batch.csv", "w");
-    if (!file) {
-        perror("Failed to open csv file");
-        exit(1);
-    }
-
-    write_batch_metadata(file, cfg);
-
-    fputs("TIME_ENABLED,", file);
-    fputs("TIME_RUNNING,", file);
-
-    for (int m = 0; m < batch_data->n_perf_counters; m++) {
-        fprintf(file, "%s,", batch_data->perf_counters[m].metric->name);
-    }
-
-    for (int m = 0; m < batch_data->n_perf_ratios; m++) {
-        fprintf(file, "%s,", batch_data->perf_ratios[m].metric->name);
+    for (int i = 0; i < batch_data->n_derived; i++) {
+        const metric_t *m = get_metric_by_id(
+                                        batch_data->derived_data[i].metric_id);
+        fprintf(file, "%s,", m->name);
     }
 
     fputc('\n', file);
 
-    for (unsigned long long i = 0; i < cfg->batch_runs; i++) {
-        fprintf(file, "%ld,", batch_data->time_enabled.run_vals[i]);
-        fprintf(file, "%ld,", batch_data->time_running.run_vals[i]);
-
-        for (int m = 0; m < batch_data->n_perf_counters; m++) {
-            fprintf(file, "%.6f,", batch_data->perf_counters[m].run_vals[i]);
+    for (unsigned long long r = 0; r < cfg->batch_runs; r++) {
+        for (int i = 0; i < batch_data->n_raw; i++) {
+            fprintf(file, "%.6f,", batch_data->raw_data[i].run_vals[r]);
         }
 
-        for (int m = 0; m < batch_data->n_perf_ratios; m++) {
-            fprintf(file, "%.6f,", batch_data->perf_ratios[m].run_vals[i]);
+        for (int i = 0; i < batch_data->n_derived; i++) {
+            fprintf(file, "%.6f,", batch_data->derived_data[i].run_vals[r]);
         }
 
         fputc('\n', file);

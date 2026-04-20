@@ -12,8 +12,9 @@
 #include <assert.h>
 #include <errno.h>
 
-#include "../../include/bench.h"
-#include "./internal.h"
+#include "../../include/metric.h"
+#include "./backend.h"
+#include "./backend_common.h"
 
 #if defined(__x86_64__) || defined(__amd64__)
 
@@ -26,7 +27,7 @@ static uint64_t rdtscp()
 }
 
 static void bench_rdtscp(batch_conf_t *batch_cfg,
-                 timer_batch_t *batch_data,
+                 batch_data_t *batch_data,
                  void (*workload)(void))
 {
     uint64_t start, end;
@@ -41,33 +42,47 @@ static void bench_rdtscp(batch_conf_t *batch_cfg,
         start = rdtscp();
         workload();
         end = rdtscp();
-        batch_data->timer.run_vals[i] = end - start;
+        batch_data->raw_data[0].run_vals[i] = (double)(end - start);
     }
 }
 
 #endif
 
-bench_func_t get_timer_bench_func(mg_id_t id)
+void run_be(batch_conf_t *batch_cfg,
+                            batch_data_t *batch_data,
+                            void (*workload)(void))
 {
-    switch (id) {
+    const metric_grp_t *mg = batch_cfg->mg;
+    assert(mg != NULL);
 
-        case MG_ID_RDTSCP:
+    switch (mg->metrics[0]) {
+
+        case METRIC_RDTSCP:
 #if defined(__x86_64__) || defined(__i386__) || defined(__amd64__)
-            return bench_rdtscp;
+            bench_rdtscp(batch_cfg, batch_data, workload);
 #else
             fprintf(stderr, "RDTSCP is x86-only\n");
             exit(1);
 #endif
+            break;
 
-        case MG_ID_ARM_TIMER:
+        case METRIC_ARM:
 #if defined(__aarch64__) || defined(__arm__)
             fprintf(stderr, "Arm timer not implemented yet\n");
 #else
             fprintf(stderr, "Arm counter is arm-only\n");
-#endif
             exit(1);
+#endif
+            break;
 
         default:
             exit(1);
     }
 }
+
+static metric_backend_t be = {
+    .id = METRIC_BE_CPU_INSTRUCTION,
+    .bench_func = run_be,
+};
+
+REGISTER_BACKEND(&be)

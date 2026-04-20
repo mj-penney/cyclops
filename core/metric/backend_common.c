@@ -12,7 +12,7 @@
 #include <assert.h>
 #include <errno.h>
 
-#include "./internal.h"
+#include "./backend_common.h"
 
 void pin_thread(void)
 {
