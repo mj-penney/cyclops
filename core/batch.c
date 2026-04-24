@@ -171,7 +171,7 @@ void run_batch(unsigned long long warmup_runs,
     process_perf_counter_data(cfg, batch_data);
     process_perf_ratio_data(cfg, batch_data);
 
-    batch_to_csv(cfg, batch_data, output_file_name);
+    batch_to_csv(cfg, batch_data, output_file_name, true);
     run_report(cfg, batch_data);
 
     destroy_batch_data(batch_data);
