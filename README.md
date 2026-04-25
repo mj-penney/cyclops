@@ -24,18 +24,55 @@ make
 ./cyclops -w STRIDED_ARRAY -g IPC -p array-elements=1000
 ```
 
-## Scripting Experiments
+## Example Experiments
 
-Cyclops is designed to be highly scriptable from the command line.
+The `cyclops` tool is designed to be highly scriptable, and make it easy to
+design performance & microarchitecture experiments.
+
 In `experiments/` there are example Python scripts for running experiments.
-For example, below are the results of an experiment using the `STRIDED_ARRAY`
-workload to estimate L1 and LLC cache sizes:
+To run these experiments, you will first need to build the `cyclops` binary
+(see above).
+
+You will then need to create a Python virtual environment and install the
+necessary packages:
+
+```bash
+cd experiments
+python -m venv venv
+pip install -r requirements.txt
+```
+
+Before running experiments, activate the virtual environment you just created:
+
+```bash
+source venv/bin/activate
+```
+
+## L1 Cache and LLC Size Estimation
+
+This experiment uses the `STRIDED_ARRAY` workload, sweeping through increasing
+array sizes, to estimate L1D and LLC capacities.
+
+This experiment can be run with:
+
+```bash
+python estimate_cache_size.py
+```
+
+### Results
 
 ![L1D and LLC miss rate curves](images/cache_miss_rates.png)
 
-Here we can see that there is a large jump in the L1D miss rate when the array is ~2-3\*10^4 Bytes, and a large jump in LLC miss rate at ~2\*10^6.
+As the array size increases, and exceeds the size of a cache, the cache can no
+longer hold all the data.
+Some will need to be fetched from other caches or DRAM, resulting in an
+increase in the cache miss rate at this point.
 
-From this, we can estimate that my L1D is probably 32KB and my LLC is in the range of 2MB.
+Here we can see that there is a large jump in the L1D miss rate when the array
+is ~2-3\*10^4 Bytes, and a large jump in LLC miss rate at ~2\*10^6.
+
+From this, we can estimate that my L1D is probably 32KB and my LLC is in the
+range of 2MB.
 
 ## Benchmarking
 

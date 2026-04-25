@@ -3,4 +3,4 @@ cyclops
 *.csv
 __pycache__/
 venv/
-*.png
+experiments/*.png
