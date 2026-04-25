@@ -1,6 +1,6 @@
 # Cyclops
 
-A minimal microbenchmarking tool for Linux build directly on top of
+A minimal microbenchmarking tool for Linux build directly on top of 
 `perf_event_open()` and timers like `rdtscp`.
 
 ## Motivation
@@ -23,6 +23,19 @@ make
 # run
 ./cyclops -w STRIDED_ARRAY -g IPC -p array-elements=1000
 ```
+
+## Scripting Experiments
+
+Cyclops is designed to be highly scriptable from the command line.
+In `experiments/` there are example Python scripts for running experiments.
+For example, below are the results of an experiment using the `STRIDED_ARRAY`
+workload to estimate L1 and LLC cache sizes:
+
+![Alt text](images/cache_miss_rates.png)
+
+Here we can see that there is a large jump in the L1D miss rate when the array is ~2-3\*10^4 Bytes, and a large jump in LLC miss rate at ~2\*10^6.
+
+From this, we can estimate that my L1D is probably 32KB and my LLC is in the range of 2MB.
 
 ## Benchmarking
 
