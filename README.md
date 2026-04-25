@@ -31,7 +31,7 @@ In `experiments/` there are example Python scripts for running experiments.
 For example, below are the results of an experiment using the `STRIDED_ARRAY`
 workload to estimate L1 and LLC cache sizes:
 
-![Alt text](images/cache_miss_rates.png)
+![L1D and LLC miss rate curves](images/cache_miss_rates.png)
 
 Here we can see that there is a large jump in the L1D miss rate when the array is ~2-3\*10^4 Bytes, and a large jump in LLC miss rate at ~2\*10^6.
 
