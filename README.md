@@ -8,6 +8,22 @@ A minimal microbenchmarking tool for Linux build directly on top of
 I built **cyclops** because I wanted a small, accurate microbenchmarking
 framework for measuring C code.
 
+## Features
+
+- Workload plugin system to easily write custom workloads (see
+  `docs/workload.md`)
+    - Workloads can have custom parameters - useful for experiments where you
+      vary an array size (for example)
+- Groups of metrics to record for a given workload (see `docs/metrics.md`)
+    - Metric groups for `perf_event_open()` counters and `rdtscp`
+    - Ratios like IPC (instructions per cycle) calculated per-run
+- Batches allowing the user to set the number of warmup runs, batch runs,
+  workload and metric group
+    - Aggregates (min, max & median) are calculated for the batch
+- Results are written to stdout (aggregate summary) & optionally a CSV file
+    - User decides whether CSV contains aggregates or per-run data
+    - CSVs contain metadata (lines starting with "#")
+
 ## Build and Run
 
 ```bash
@@ -24,21 +40,18 @@ make
 ./cyclops -w STRIDED_ARRAY -m IPC -p array-elements=1000
 ```
 
-## Benchmarking Methodology
+## Example Usage
 
-The following methods are used to maximise benchmark accuracy and minimise
-measurement noise:
+Run the `STRIDED_ARRAY` workload, measuring the `IPC` metric group and write
+output to `output.csv`.
+The batch will have 20 runs (`-r`), and there will be 10 warmup runs (`-u`).
 
-- Pin thread to a single core
-- Warmup runs to train branch predictors and warm caches (set from the cli)
-- Barriers and serialization to ensure the compiler or CPU don't reorder
-  workload instructions outside the measurement window
-- Detect kernel multiplexing physical PMU counters with `time_running` and
-  `time_enabled`, and scale results if necessary (for `perf_event_open()`)
+```bash
 
-See the benchmarking code in the metric backends in `core/metric/`.
+./cyclops -u 10 -r 20 -w STRIDED_ARRAY -m IPC -0 output.csv
+```
 
-## Example Experiments
+## Experiments
 
 The `cyclops` tool is designed to be highly scriptable, and make it easy to
 design performance & microarchitecture experiments.
@@ -65,7 +78,7 @@ source venv/bin/activate
 
 Check the example experiments below for inspiration.
 
-### Experiment: L1 Cache and LLC Size Estimation
+### L1 Cache and LLC Size Estimation
 
 This experiment uses the `STRIDED_ARRAY` workload, sweeping through increasing
 array sizes, to estimate L1D and LLC capacities from cache miss rates.
@@ -86,24 +99,13 @@ Some will need to be fetched from other caches or DRAM, resulting in an
 increase in the cache miss rate at this point.
 
 Here we can see that there is a large jump in the L1D miss rate when the array
-is ~2-3\*10^4 Bytes, and a large jump in LLC miss rate at ~2\*10^6.
+is between 2\*10^4 and 4\*10^4 Bytes, and a large jump in LLC miss rate
+between 2\*10^6 and 3\*10^6.
 
-From this, we can estimate that my L1D is probably 32KB and my LLC is in the
-range of 2MB.
+These ranges align with the actual cache sizes for my CPU:
 
-## Ouput
-
-### CSV File
-
-Aggregated batch results (min, max, median for each metric in the selected
-metric group) will be written to a CSV file if the `-o <filename>` arguments
-are passed.
-The file will contain metadata like the workload, metric group and any workload
-parameters (metadata lines start with "#" and are at the top of the file).
-
-### Batch Summary (`stdout`)
-
-Aggregate values and metadata for the batch will be written to `stdout`.
+- **L1D:** 32KiB per physical core
+- **L3:** 3MiB
 
 ## Project Roadmap
 
