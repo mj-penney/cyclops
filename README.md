@@ -48,7 +48,7 @@ The batch will have 20 runs (`-r`), and there will be 10 warmup runs (`-u`).
 
 ```bash
 
-./cyclops -u 10 -r 20 -w STRIDED_ARRAY -m IPC -0 output.csv
+./cyclops -u 10 -r 20 -w STRIDED_ARRAY -m IPC -o output.csv
 ```
 
 ## Experiments
