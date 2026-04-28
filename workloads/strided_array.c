@@ -6,11 +6,31 @@ unsigned long long stride_bytes;
 unsigned long long array_elements;
 
 static int *array;
+static unsigned long long *indices;
+
+static void init_indices()
+{
+    indices = malloc(array_elements * sizeof(unsigned long long));
+    for (unsigned long long i = 0; i < array_elements; i++) {
+        indices[i] = i;
+    }
+
+    srand(42);
+    for (unsigned long long i = array_elements - 1; i > 0; i--) {
+        unsigned long long j = rand() % (i + 1);
+
+        unsigned long long tmp = indices[i];
+        indices[i] = indices[j];
+        indices[j] = tmp;
+    }
+}
 
 static void init(workload_t *wl)
 {
     stride_bytes = wl_get_param(wl, "stride-bytes");
     array_elements = wl_get_param(wl, "array-elements");
+
+    init_indices();
 
     array = (int *)aligned_alloc(stride_bytes, stride_bytes * array_elements);
     for (unsigned long long i = 0; i < array_elements; i++) {
@@ -21,13 +41,14 @@ static void init(workload_t *wl)
 static void clean(void)
 {
     free(array);
+    free(indices);
 }
 
 __attribute__((noinline)) static void workload(void)
 {
     volatile unsigned long long sum = 0;
     for (unsigned long long i = 0; i < array_elements; i++) {
-        sum += array[i * (stride_bytes / sizeof(int))];
+        sum += array[indices[i] * (stride_bytes / sizeof(int))];
     }
 }
 

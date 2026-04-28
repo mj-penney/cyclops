@@ -40,9 +40,9 @@ def run_LLC_experiment():
 
     param_sweep = ParamSweep(
         key="array-elements",
-        low=1000,
-        high=200000,
-        step=1000,
+        low=10000,
+        high=1000000,
+        step=10000,
     )
 
     cyclops = Cyclops(
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     plt.plot(x_L1D, y_L1D, marker="", label="L1D")
     plt.plot(x_LLC, y_LLC, marker="", label="LLC")
     plt.xscale("log")
-    plt.yscale("log")
+    #plt.yscale("log")
     plt.xlabel("Array size (Bytes)")
     plt.ylabel("Miss rate")
     plt.title("")

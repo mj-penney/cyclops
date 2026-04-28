@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 
 @dataclass
 class ParamSweep:
-    key: int
+    key: str
     low: int
     high: int
     step: int
@@ -40,7 +40,7 @@ class Cyclops:
                 f"{self.param_sweep.key}="
                 f"{self.param_sweep.low}:"
                 f"{self.param_sweep.high}:"
-                f"{self.param_sweep.step}:"
+                f"{self.param_sweep.step}"
             )
 
         result = subprocess.run(arg_list)
