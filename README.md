@@ -37,8 +37,8 @@ cd cyclops
 # build
 make
 
-# run
-./cyclops -w STRIDED_ARRAY -m IPC -p array-elements=1000
+# run (generate help text)
+./cyclops -h
 ```
 
 ## Example Usage
@@ -48,11 +48,11 @@ make
 - Single batch
 - 10 warmup runs
 - 20 batch runs
-- `STRIDED_ARRAY` workload with default params
+- `BRANCH` workload with default params
 - `IPC` metric group
 
 ```bash
-./cyclops -u 10 -r 20 -w STRIDED_ARRAY -m IPC
+./cyclops -u 10 -r 20 -w BRANCH -m IPC
 ```
 
 ### Example 2
@@ -92,7 +92,15 @@ just created:
 source venv/bin/activate
 ```
 
-Check the example experiments below for inspiration.
+Then run the experiments:
+
+```bash
+python3 estimate_cache_size.py
+python3 branch.py
+```
+
+This will generate the figures below (PNG files will be saved in
+`experiments/`):
 
 ### L1 Cache and LLC Size Estimation
 
@@ -116,22 +124,9 @@ increase in the cache miss rate at this point.
 
 Here we can see that there is a large jump in the L1D miss rate when the array
 is between 2\*10^4 and 4\*10^4 Bytes, and a large jump in LLC miss rate
-between 2\*10^6 and 3\*10^6.
+between 2\*10^6 and 4\*10^6.
 
 These ranges align with the actual cache sizes for my CPU:
 
 - **L1D:** 32KiB per physical core
 - **L3:** 3MiB
-
-## Project Roadmap
-
-### Milestone 1 - Reliable single-threaded benchmarking
-
-- single-threaded measurement accuracy & reliability
-- a simple cli tool allowing users to design benchmark experiments
-- a simple workload API so users can measure custom code
-
-### Milestone 2 - Multithreaded update
-
-- support multithreaded workloads
-- accurate per-thread metrics
