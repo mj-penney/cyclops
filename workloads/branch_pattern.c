@@ -12,13 +12,12 @@ static char *array;
 /*
  * Random number generator
  */
-static unsigned long long xorshift64()
+static unsigned long long xorshift64(unsigned long long seed)
 {
-    static unsigned long long x = 88172645463325252ull;
-    x ^= x << 13;
-    x ^= x >> 7;
-    x ^= x << 17;
-    return x;
+    seed ^= seed << 13;
+    seed ^= seed >> 7;
+    seed ^= seed << 17;
+    return seed;
 }
 
 static void init(workload_t *wl)
@@ -38,9 +37,10 @@ static void init(workload_t *wl)
     char *pattern = malloc(pattern_len * sizeof(char));
     array = malloc(n_branches * sizeof(char));
 
+    unsigned long long random = 88172645463325252ull;
     for (unsigned long long i = 0; i < pattern_len; i++) {
-        unsigned long long random = xorshift64() % 100;
-        pattern[i] = (random < bias) ? 1 : 0;
+        random = xorshift64(random);
+        pattern[i] = ((random % 100) < bias) ? 1 : 0;
     }
 
     unsigned long long full_repetitions = n_branches / pattern_len;
