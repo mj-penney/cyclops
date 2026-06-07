@@ -37,6 +37,7 @@ CORE_SRCS = \
 	core/metric_grp/metric_grps/page_faults.c \
 	core/metric_grp/metric_grps/rdtscp.c \
 	core/metric_grp/metric_grps/stalled_cycles.c \
+	core/metric_grp/metric_grps/task_clock_ns.c \
 	core/experiment/batch.c \
 	core/experiment/param_sweep.c \
 	core/experiment/report.c \
