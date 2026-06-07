@@ -1,31 +1,28 @@
 import matplotlib.pyplot as plt
+from matplotlib.ticker import EngFormatter
 import pandas as pd
+import os
 
 from cyclops import Cyclops, ParamSweep
 
-BATCH_RUNS = 3
-WARMUP_RUNS = 1
+BATCH_RUNS = 20
+WARMUP_RUNS = 20
+N_BRANCHES = 250000
 
-#AGGREGATE = "MIN"
-#AGGREGATE = "MAX"
 AGGREGATE = "MEDIAN"
 
 WORKLOAD = "BRANCH_PATTERN"
 
 METRIC_GRP = "BRANCH"
 METRIC = "BRANCH_MISPREDICTIONS"
-#METRIC_GRP = "BPU_READS"
-#METRIC = "BPU_READ_MISS_RATE"
 
-N_BRANCHES = 250000
-
-def sweep_pattern_len(bias: int):
+def sweep_pattern_len(lo: int, hi: int, step: int):
 
     param_sweep = ParamSweep(
         key="pattern-len",
-        low=1000,
-        high=250000,
-        step=1000,
+        low=lo,
+        high=hi,
+        step=step,
     )
 
     cyclops = Cyclops(
@@ -35,62 +32,135 @@ def sweep_pattern_len(bias: int):
         batch_runs=BATCH_RUNS,
         params={
             "n-branches": N_BRANCHES,
-            "bias": bias,
+            "bias": 50,
         },
         param_sweep=param_sweep,
-        #csv_all=True,
     )
     cyclops.exec()
 
+def fig_1_run_experiment():
+    sweep_pattern_len(1, 60000, 1000)
+    os.rename("param_sweep.csv", "fig_1.csv")
+
+def fig_1_make_fig():
+
     df = pd.read_csv(
-        f"param_sweep.csv",
+        f"fig_1.csv",
         comment="#",
-        index_col=param_sweep.key
+        index_col="pattern-len"
     )
 
-    return df.index.values, (df[f"{METRIC}:{AGGREGATE}"].values / N_BRANCHES)
+    x = df.index.values
+    y1 = df[f"BRANCH_MISPREDICTIONS:{AGGREGATE}"].values / N_BRANCHES
+    y2 = df[f"IPC:{AGGREGATE}"].values
 
-def run_experiment(biases: list[int], file_name: str, figure_title: str):
+    fig = plt.figure()
 
-    data = []
-    for bias in biases:
-        x, y = sweep_pattern_len(bias)
-        data.append({ "x": x, "y": y, "bias": bias})
+    ax1 = fig.add_subplot(2, 1, 1)
+    ax2 = fig.add_subplot(2, 1, 2, sharex=ax1)
 
-    plt.figure()
+    ax1.plot(x, 100 * y1, marker="")
+    ax2.plot(x, y2, marker="")
 
-    for d in data:
-        plt.plot(d["x"], d["y"], marker="", label=f"Bias: {d["bias"]}")
+    ax1.set_title("% Mispredictions and IPC vs Pattern Length")
+    ax1.set_ylabel("% Mispredictions")
 
-    #plt.xscale("log")
-    #plt.yscale("log")
-    plt.xlabel("Pattern Length")
-    plt.ylabel("Misprediction Rate")
-    plt.title(figure_title)
-    plt.grid(True)
-    plt.ylim(0, 1)
-    plt.legend(loc='lower right', bbox_to_anchor=(1, 0.5))
-    plt.savefig(file_name)
+    ax2.set_ylabel("IPC")
+    ax2.set_xlabel("Pattern Length")
+
+    ax1.tick_params(axis='x', which='both', labelbottom=False)
+    ax2.tick_params(axis='x', which='both', labelbottom=True)
+    ax2.xaxis.set_major_formatter(EngFormatter(unit='', sep=''))
+
+    ax1.grid(True)
+    ax2.grid(True)
+
+    fig.tight_layout()
+    plt.savefig("fig_1.png")
+    plt.close()
+
+def fig_2_run_experiment():
+    sweep_pattern_len(1, 3000, 30)
+    os.rename("param_sweep.csv", "fig_2.csv")
+
+def fig_2_make_fig():
+
+    df = pd.read_csv(
+        f"fig_2.csv",
+        comment="#",
+        index_col="pattern-len"
+    )
+
+    x = df.index.values
+    y1 = df[f"BRANCH_MISPREDICTIONS:{AGGREGATE}"].values / N_BRANCHES
+
+    fig, ax1 = plt.subplots()
+    ax1.plot(x, 100 * y1)
+
+    ax1.set_title("% Mispredictions vs Pattern Length")
+    ax1.set_ylabel("% Mispredictions")
+    ax1.set_xlabel("Pattern length")
+
+    ax1.xaxis.set_major_formatter(EngFormatter(unit='', sep=''))
+    ax1.grid(True)
+
+    fig.tight_layout()
+
+    plt.savefig("fig_2.png")
+    plt.close(fig)
+
+def fig_3_run_experiment():
+    sweep_pattern_len(1, 6000, 30)
+    os.rename("param_sweep.csv", "fig_3.csv")
+
+def fig_3_make_fig():
+
+    df = pd.read_csv(
+        f"fig_3.csv",
+        comment="#",
+        index_col="pattern-len"
+    )
+
+    x = df.index.values
+    y1 = df[f"BRANCH_MISPREDICTIONS:{AGGREGATE}"].values / N_BRANCHES
+    y2 = df[f"IPC:{AGGREGATE}"].values
+
+    fig = plt.figure()
+
+    ax1 = fig.add_subplot(2, 1, 1)
+    ax2 = fig.add_subplot(2, 1, 2, sharex=ax1)
+
+    ax1.plot(x, 100 * y1, marker="")
+    ax2.plot(x, y2, marker="")
+
+    ax1.set_title("% Mispredictions and IPC vs Pattern Length")
+    ax1.set_ylabel("% Mispredictions")
+
+    ax2.set_ylabel("IPC")
+    ax2.set_xlabel("Pattern Length")
+
+    ax1.tick_params(axis='x', which='both', labelbottom=False)
+    ax2.tick_params(axis='x', which='both', labelbottom=True)
+    ax2.xaxis.set_major_formatter(EngFormatter(unit='', sep=''))
+
+    ax1.grid(True)
+    ax2.grid(True)
+
+    ax1.axvline(x=3820, linestyle="--")
+    ax2.axvline(x=3820, linestyle="--")
+
+    fig.tight_layout()
+    plt.savefig("fig_3.png")
     plt.close()
 
 if __name__ == "__main__":
 
-    """
-    run_experiment(
-        biases=[50, 60, 70, 80, 90, 95, 99],
-        file_name = "branch_bias_take.png",
-        figure_title = "Bias: T",
-    )
+    fig_1_run_experiment()
+    fig_1_make_fig()
 
-    run_experiment(
-        biases=[50, 40, 30, 20, 10, 5, 1],
-        file_name="branch_bias_dont_take.png",
-        figure_title="Bias: NT",
-    )
-    """
+    fig_2_run_experiment()
+    fig_2_make_fig()
 
-    run_experiment(
-        biases=[50],
-        file_name="branch_unbiased.png",
-        figure_title="Unbiased",
-    )
+    fig_3_run_experiment()
+    fig_3_make_fig()
+
