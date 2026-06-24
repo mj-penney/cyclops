@@ -38,7 +38,7 @@ static unsigned long long ps_get_nth_param_val_arithmetic(param_sweep_t *ps,
     unsigned long long high = strtoull(ps->wl_param_high, NULL, 10);
     unsigned long long step = strtoull(ps->wl_param_step, NULL, 10);
 
-    if (n == ps->n_batches) {
+    if (n == ps->n_batches - 1) {
         return high;
     }
     return low + (n * step);
