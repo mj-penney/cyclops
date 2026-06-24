@@ -16,9 +16,9 @@ typedef struct workload {
     const int n_params;
     wl_param_t *params;
 
-    void (*init)(workload_t *wl);
-    void (*clean)(void);
-    void (*workload)(void);
+    void (*pre_batch)(workload_t *wl);
+    void (*post_batch)(void);
+    void (*execute)(void);
 } workload_t;
 
 #define REGISTER_WORKLOAD(wl_ptr) \

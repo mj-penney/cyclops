@@ -180,9 +180,9 @@ static void batch_run(batch_t *b, unsigned long long batch_no)
 {
     const metric_backend_t *backend = metric_backend_get(b->mg->backend);
 
-    b->wl->init(b->wl);
-    backend->bench_func(b, b->wl->workload);
-    b->wl->clean();
+    b->wl->pre_batch(b->wl);
+    backend->bench_func(b, b->wl->execute);
+    b->wl->post_batch();
 
     batch_aggregate_raw_metrics(b);
     batch_process_derived_metrics(b);

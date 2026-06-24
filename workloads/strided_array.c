@@ -28,7 +28,7 @@ static void init_indices()
     }
 }
 
-static void init(workload_t *wl)
+static void pre_batch(workload_t *wl)
 {
     array_size_kib = wl_get_param_val(wl, "array-size-kib");
     repeats = wl_get_param_val(wl, "repeats");
@@ -54,13 +54,13 @@ static void init(workload_t *wl)
 
 }
 
-static void clean(void)
+static void post_batch(void)
 {
     free(array);
     free(indices);
 }
 
-__attribute__((noinline)) static void workload(void)
+__attribute__((noinline)) static void execute(void)
 {
     unsigned int p = indices[0];
 
@@ -89,9 +89,9 @@ static workload_t wl = {
     .n_params = 2,
     .params = params,
 
-    .init = init,
-    .clean = clean,
-    .workload = workload,
+    .pre_batch = pre_batch,
+    .post_batch = post_batch,
+    .execute = execute,
 };
 
 REGISTER_WORKLOAD(&wl)

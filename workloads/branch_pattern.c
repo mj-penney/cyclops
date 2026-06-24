@@ -20,7 +20,7 @@ static unsigned long long xorshift64(unsigned long long seed)
     return seed;
 }
 
-static void init(workload_t *wl)
+static void pre_batch(workload_t *wl)
 {
     pattern_len = wl_get_param_val(wl, "pattern-len");
     n_branches = wl_get_param_val(wl, "n-branches");
@@ -56,12 +56,12 @@ static void init(workload_t *wl)
     free(pattern);
 }
 
-static void clean(void)
+static void post_batch(void)
 {
     free(array);
 }
 
-__attribute__((noinline)) static void workload(void)
+__attribute__((noinline)) static void execute(void)
 {
     volatile unsigned long long sum = 0;
     for (unsigned long long i = 0; i < n_branches; i++) {
@@ -92,9 +92,9 @@ static workload_t wl = {
     .n_params = 3,
     .params = params,
 
-    .init = init,
-    .clean = clean,
-    .workload = workload,
+    .pre_batch = pre_batch,
+    .post_batch = post_batch,
+    .execute = execute,
 };
 
 REGISTER_WORKLOAD(&wl)
