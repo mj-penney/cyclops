@@ -8,10 +8,7 @@
 #include "../../include/workload.h"
 #include "./internal.h"
 
-/*
- * Calculates the number of batches needed to perform the parameter sweep.
- */
-static unsigned long long ps_n_batches(param_sweep_t *ps)
+static unsigned long long ps_n_batches_arithmetic(param_sweep_t *ps)
 {
     unsigned long long low = strtoull(ps->wl_param_low, NULL, 10);
     unsigned long long high = strtoull(ps->wl_param_high, NULL, 10);
@@ -24,6 +21,34 @@ static unsigned long long ps_n_batches(param_sweep_t *ps)
         return (diff / step) + 2;
     }
     return (diff / step) + 1;
+}
+
+/*
+ * Calculates the number of batches needed to perform the parameter sweep.
+ */
+static unsigned long long ps_n_batches(param_sweep_t *ps)
+{
+    return ps_n_batches_arithmetic(ps);
+}
+
+static unsigned long long ps_get_nth_param_val_arithmetic(param_sweep_t *ps,
+                                                          unsigned long long n)
+{
+    unsigned long long low = strtoull(ps->wl_param_low, NULL, 10);
+    unsigned long long high = strtoull(ps->wl_param_high, NULL, 10);
+    unsigned long long step = strtoull(ps->wl_param_step, NULL, 10);
+
+    if (n == ps->n_batches) {
+        return high;
+    }
+    return low + (n * step);
+}
+
+/* n is zero-based */
+static unsigned long long ps_get_nth_param_val(param_sweep_t *ps,
+                                               unsigned long long n)
+{
+    return ps_get_nth_param_val_arithmetic(ps, n);
 }
 
 static param_sweep_t *ps_init(cyclops_cfg_t *cyclops_cfg)
@@ -86,20 +111,6 @@ static void ps_destroy(param_sweep_t *ps)
 
     free(ps);
     ps = NULL;
-}
-
-/* n is zero-based */
-static unsigned long long ps_get_nth_param_val(param_sweep_t *ps,
-                                               unsigned long long n)
-{
-    unsigned long long low = strtoull(ps->wl_param_low, NULL, 10);
-    unsigned long long high = strtoull(ps->wl_param_high, NULL, 10);
-    unsigned long long step = strtoull(ps->wl_param_step, NULL, 10);
-
-    if (n == ps->n_batches) {
-        return high;
-    }
-    return low + (n * step);
 }
 
 static void ps_set_batch_vals(param_sweep_t *ps, batch_t *b,
