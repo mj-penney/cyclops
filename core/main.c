@@ -27,11 +27,18 @@ static const char help_text[] =
 "                                   through a range of values (one batch\n"
 "                                   will be run for each param value)\n"
 "\n"
-"  --batch-csv                      Write run-level data to csv files for\n"
-"                                   each batch\n"
+"  --csv                            Write batch-level aggregate data to\n"
+"                                   param_sweep.csv if running a param\n"
+"                                   sweep, or run-level data to batch_0.csv\n"
+"                                   if running a single batch\n"
 "\n"
-"  --param-sweep-csv                Write aggregated batch data to\n"
-"                                   'param_sweep.csv'\n"
+"  --csv-all                        Write batch-level aggregate data to\n"
+"                                   param_sweep.csv if running a param\n"
+"                                   sweep, and run-level data for all\n"
+"                                   batches to batch_N.csv\n"
+"\n"
+"  --report                         Write batch-level aggregate data to\n"
+"                                   stdout\n"
 "\n";
 
 static void print_main_help_text()
