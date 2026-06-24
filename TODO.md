@@ -3,7 +3,7 @@
 ## General
 
 - Implement a logging module
-- Improve error handling (integrate with logging module?)
+- Improve error handling and propagation
 
 ## Documentation
 
@@ -38,8 +38,3 @@
 ## Workload
 
 - Add a template workload plugin file for users to get users started
-
-## Experiments
-
-- Do a brief explanation of the biased pattern length branch predictor
-  experiment in the README
