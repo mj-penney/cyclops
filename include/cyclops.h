@@ -23,6 +23,7 @@ typedef struct {
     bool batch_csv;
     bool param_sweep_csv;
     bool report;
+    bool geometric;
 } cyclops_cfg_t;
 
 #endif

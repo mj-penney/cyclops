@@ -23,12 +23,37 @@ static unsigned long long ps_n_batches_arithmetic(param_sweep_t *ps)
     return (diff / step) + 1;
 }
 
+static unsigned long long ps_n_batches_geometric(param_sweep_t *ps)
+{
+    unsigned long long low = strtoull(ps->wl_param_low, NULL, 10);
+    unsigned long long high = strtoull(ps->wl_param_high, NULL, 10);
+    unsigned long long step = strtoull(ps->wl_param_step, NULL, 10);
+
+    unsigned long long val = low;
+    unsigned long long n = 0;
+
+    while (val < high) {
+        n++;
+        val *= step;
+    }
+
+    if (val == high) {
+        n++;
+    }
+
+    return n + 1;
+}
+
 /*
  * Calculates the number of batches needed to perform the parameter sweep.
  */
 static unsigned long long ps_n_batches(param_sweep_t *ps)
 {
-    return ps_n_batches_arithmetic(ps);
+    if (ps->geometric) {
+        return ps_n_batches_geometric(ps);
+    } else {
+        return ps_n_batches_arithmetic(ps);
+    }
 }
 
 static unsigned long long ps_get_nth_param_val_arithmetic(param_sweep_t *ps,
@@ -44,11 +69,37 @@ static unsigned long long ps_get_nth_param_val_arithmetic(param_sweep_t *ps,
     return low + (n * step);
 }
 
+static unsigned long long ps_get_nth_param_val_geometric(param_sweep_t *ps,
+                                                        unsigned long long n)
+{
+    unsigned long long low = strtoull(ps->wl_param_low, NULL, 10);
+    unsigned long long high = strtoull(ps->wl_param_high, NULL, 10);
+    unsigned long long step = strtoull(ps->wl_param_step, NULL, 10);
+
+    if (n == ps->n_batches - 1) {
+        return high;
+    }
+
+    unsigned long long val = low;
+    unsigned long long _n = 0;
+
+    while (_n < n) {
+        val *= step;
+        _n++;
+    }
+
+    return val;
+}
+
 /* n is zero-based */
 static unsigned long long ps_get_nth_param_val(param_sweep_t *ps,
                                                unsigned long long n)
 {
-    return ps_get_nth_param_val_arithmetic(ps, n);
+    if (ps->geometric) {
+        return ps_get_nth_param_val_geometric(ps, n);
+    } else {
+        return ps_get_nth_param_val_arithmetic(ps, n);
+    }
 }
 
 static param_sweep_t *ps_init(cyclops_cfg_t *cyclops_cfg)
@@ -72,11 +123,14 @@ static param_sweep_t *ps_init(cyclops_cfg_t *cyclops_cfg)
     ps->mg = mg;
     ps->warmup_runs = cyclops_cfg->warmup_runs;
     ps->batch_runs = cyclops_cfg->batch_runs;
+
     ps->wl_param_key = cyclops_cfg->ps_wl_param_key;
     ps->wl_param_low = cyclops_cfg->ps_wl_param_low;
     ps->wl_param_high = cyclops_cfg->ps_wl_param_high;
     ps->wl_param_step = cyclops_cfg->ps_wl_param_step;
+    ps->geometric = cyclops_cfg->geometric;
     ps->n_batches = ps_n_batches(ps);
+
     ps->to_csv = cyclops_cfg->param_sweep_csv;
 
     if (!(ps->metrics = calloc(mg->n_metrics, sizeof(param_sweep_metric_t)))) {

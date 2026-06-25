@@ -71,6 +71,7 @@ typedef struct {
     char *wl_param_low;
     char *wl_param_high;
     char *wl_param_step;
+    bool geometric;
 
     unsigned long long n_batches;
     param_sweep_metric_t *metrics;
