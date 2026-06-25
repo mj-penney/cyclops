@@ -21,6 +21,8 @@
 
 ## CLI
 
+- Improve handling of malformed commands (currently very easy to crash the
+  program)
 - Add option to print info for each workload
 - Add advanced options:
     - Pin to specific core (core 0 by default)
