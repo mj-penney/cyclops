@@ -40,9 +40,9 @@ workload_t *wl_get_by_name(const char *name)
 unsigned long long wl_param_get_val(wl_param_t *wl_param)
 {
     if (wl_param->arg) {
-        return strtoull(wl_param->arg, NULL, 10);
+        return wl_param->arg;
     }
-    return strtoull(wl_param->default_value, NULL, 10);
+    return wl_param->default_value;
 }
 
 /*
@@ -66,7 +66,7 @@ unsigned long long wl_get_param_val(workload_t *wl, const char *key)
     return 0;
 }
 
-void wl_set_param_val(workload_t *wl, const char *key, const char *arg)
+void wl_set_param_val(workload_t *wl, const char *key, unsigned long long arg)
 {
     if (!wl->params) {
         fprintf(stderr, "Workload has no parameters\n");

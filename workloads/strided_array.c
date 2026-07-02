@@ -76,10 +76,10 @@ __attribute__((noinline)) static void execute(void)
 static wl_param_t params[] = {
     {
         .key = "array-size-kib",
-        .default_value = "1",
+        .default_value = 1,
     }, {
         .key = "repeats",
-        .default_value = "10000",
+        .default_value = 10000,
     },
 };
 

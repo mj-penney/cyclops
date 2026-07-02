@@ -68,9 +68,9 @@ typedef struct {
     metric_grp_t *mg;
 
     char *wl_param_key;
-    char *wl_param_low;
-    char *wl_param_high;
-    char *wl_param_step;
+    unsigned long long wl_param_low;
+    unsigned long long wl_param_high;
+    unsigned long long wl_param_step;
     bool geometric;
 
     unsigned long long n_batches;

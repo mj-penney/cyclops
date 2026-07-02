@@ -10,7 +10,7 @@
 
 typedef struct {
     char *key;
-    char *value;
+    unsigned long long value;
 } wl_arg_t;
 
 typedef struct {
@@ -25,9 +25,9 @@ typedef struct {
 
     bool geometric;
     char *ps_wl_param_key;
-    char *ps_wl_param_low;
-    char *ps_wl_param_high;
-    char *ps_wl_param_step;
+    unsigned long long ps_wl_param_low;
+    unsigned long long ps_wl_param_high;
+    unsigned long long ps_wl_param_step;
 
     bool batch_csv;
     bool param_sweep_csv;

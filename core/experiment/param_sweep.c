@@ -10,9 +10,9 @@
 
 static unsigned long long ps_n_batches_arithmetic(param_sweep_t *ps)
 {
-    unsigned long long low = strtoull(ps->wl_param_low, NULL, 10);
-    unsigned long long high = strtoull(ps->wl_param_high, NULL, 10);
-    unsigned long long step = strtoull(ps->wl_param_step, NULL, 10);
+    unsigned long long low = ps->wl_param_low;
+    unsigned long long high = ps->wl_param_high;
+    unsigned long long step = ps->wl_param_step;
 
     unsigned long long diff = high - low;
     unsigned long long mod = diff % step;
@@ -25,9 +25,9 @@ static unsigned long long ps_n_batches_arithmetic(param_sweep_t *ps)
 
 static unsigned long long ps_n_batches_geometric(param_sweep_t *ps)
 {
-    unsigned long long low = strtoull(ps->wl_param_low, NULL, 10);
-    unsigned long long high = strtoull(ps->wl_param_high, NULL, 10);
-    unsigned long long step = strtoull(ps->wl_param_step, NULL, 10);
+    unsigned long long low = ps->wl_param_low;
+    unsigned long long high = ps->wl_param_high;
+    unsigned long long step = ps->wl_param_step;
 
     unsigned long long val = low;
     unsigned long long n = 0;
@@ -59,9 +59,9 @@ static unsigned long long ps_n_batches(param_sweep_t *ps)
 static unsigned long long ps_get_nth_param_val_arithmetic(param_sweep_t *ps,
                                                           unsigned long long n)
 {
-    unsigned long long low = strtoull(ps->wl_param_low, NULL, 10);
-    unsigned long long high = strtoull(ps->wl_param_high, NULL, 10);
-    unsigned long long step = strtoull(ps->wl_param_step, NULL, 10);
+    unsigned long long low = ps->wl_param_low;
+    unsigned long long high = ps->wl_param_high;
+    unsigned long long step = ps->wl_param_step;
 
     if (n == ps->n_batches - 1) {
         return high;
@@ -72,9 +72,9 @@ static unsigned long long ps_get_nth_param_val_arithmetic(param_sweep_t *ps,
 static unsigned long long ps_get_nth_param_val_geometric(param_sweep_t *ps,
                                                         unsigned long long n)
 {
-    unsigned long long low = strtoull(ps->wl_param_low, NULL, 10);
-    unsigned long long high = strtoull(ps->wl_param_high, NULL, 10);
-    unsigned long long step = strtoull(ps->wl_param_step, NULL, 10);
+    unsigned long long low = ps->wl_param_low;
+    unsigned long long high = ps->wl_param_high;
+    unsigned long long step = ps->wl_param_step;
 
     if (n == ps->n_batches - 1) {
         return high;
@@ -190,11 +190,8 @@ static void ps_set_batch_vals(param_sweep_t *ps, batch_t *b,
 void ps_run(cyclops_cfg_t *cyclops_cfg)
 {
     param_sweep_t *ps = ps_init(cyclops_cfg);
+    unsigned long long batch_num, param_val;
 
-    static char param_val_buf[64];
-    unsigned long long param_val;
-
-    unsigned long long batch_num;
     for (batch_num = 0; batch_num < ps->n_batches; batch_num++) {
 
         batch_t *b = batch_init(cyclops_cfg);
@@ -204,8 +201,7 @@ void ps_run(cyclops_cfg_t *cyclops_cfg)
          * batch_init(), not before
          */
         param_val = ps_get_nth_param_val(ps, batch_num);
-        snprintf(param_val_buf, sizeof(param_val_buf), "%llu", param_val);
-        wl_set_param_val(ps->wl, ps->wl_param_key, param_val_buf);
+        wl_set_param_val(ps->wl, ps->wl_param_key, param_val);
 
         batch_param_sweep_run(b, batch_num);
 

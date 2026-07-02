@@ -67,13 +67,13 @@ __attribute__((noinline)) static void execute(void)
 static wl_param_t params[] = {
     {
         .key = "pattern-len",
-        .default_value = "16",
+        .default_value = 16,
     }, {
         .key = "pattern-reps",
-        .default_value = "1000",
+        .default_value = 1000,
     }, {
         .key = "bias",
-        .default_value = "50", // range: 0 - 100 (50 is 'unbiased')
+        .default_value = 50, // range: 0 - 100 (50 is 'unbiased')
     }
 };
 

@@ -32,9 +32,9 @@ static struct option long_opts[] = {
     {0, 0, 0, 0}
 };
 
-int cli_cfg_parse_wl_arg(cyclops_cfg_t *cfg, char *_optarg)
+int cli_cfg_parse_wl_arg(cyclops_cfg_t *cfg, char *input)
 {
-    int len  = strlen(optarg);
+    int len  = strlen(input);
     char *p0, *p1;
 
     if (cfg->n_wl_args >= MAX_WL_ARGS) {
@@ -44,39 +44,39 @@ int cli_cfg_parse_wl_arg(cyclops_cfg_t *cfg, char *_optarg)
 
     /* parse the wl param key */
 
-    p0 = _optarg;
-    if (!(p1 = strchr(_optarg, '='))) {
+    p0 = input;
+    if (!(p1 = strchr(input, '='))) {
         return -1;
     }
     cfg->wl_args[cfg->n_wl_args].key = strndup(p0, p1 - p0);
 
     /* parse the arg value */
 
-    if (p1 - _optarg >= len) {
+    if (p1 - input >= len) {
         return -1;
     }
-    cfg->wl_args[cfg->n_wl_args].value = strdup(p1 + 1);
+    cfg->wl_args[cfg->n_wl_args].value = strtoull(p1 + 1, NULL, 10);
     cfg->n_wl_args++;
 
     return 0;
 }
 
-int cli_cfg_parse_param_sweep_args(cyclops_cfg_t *cfg, char *_optarg)
+int cli_cfg_parse_param_sweep_args(cyclops_cfg_t *cfg, char *input)
 {
-    int len  = strlen(optarg);
+    int len  = strlen(input);
     char *p0, *p1;
 
     /* parse the wl param key */
 
-    p0 = _optarg;
-    if (!(p1 = strchr(_optarg, '='))) {
+    p0 = input;
+    if (!(p1 = strchr(input, '='))) {
         return -1;
     }
     cfg->ps_wl_param_key = strndup(p0, p1 - p0);
 
     /* parse the low value */
 
-    if (p1 - _optarg >= len) {
+    if (p1 - input >= len) {
         return -1;
     }
 
@@ -84,11 +84,11 @@ int cli_cfg_parse_param_sweep_args(cyclops_cfg_t *cfg, char *_optarg)
     if (!(p1 = strchr(p0, ':'))) {
         return -1;
     }
-    cfg->ps_wl_param_low = strndup(p0, p1 - p0);
+    cfg->ps_wl_param_low = strtoull(p0, NULL, 10);
 
     /* parse the high value */
 
-    if (p1 - _optarg >= len) {
+    if (p1 - input >= len) {
         return -1;
     }
 
@@ -96,14 +96,14 @@ int cli_cfg_parse_param_sweep_args(cyclops_cfg_t *cfg, char *_optarg)
     if (!(p1 = strchr(p0, ':'))) {
         return -1;
     }
-    cfg->ps_wl_param_high = strndup(p0, p1 - p0);
+    cfg->ps_wl_param_high = strtoull(p0, NULL, 10);
 
     /* parse the step value */
 
-    if (p1 - _optarg >= len) {
+    if (p1 - input >= len) {
         return -1;
     }
-    cfg->ps_wl_param_step = strdup(p1 + 1);
+    cfg->ps_wl_param_step = strtoull(p1 + 1, NULL, 10);
 
     return 0;
 }

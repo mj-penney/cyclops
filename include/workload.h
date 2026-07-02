@@ -5,8 +5,8 @@
 
 typedef struct {
     const char *key;
-    const char *arg;
-    const char *default_value;
+    unsigned long long arg;
+    unsigned long long default_value;
 } wl_param_t;
 
 typedef struct workload workload_t;
@@ -32,6 +32,6 @@ workload_t *wl_get_by_name(const char *name);
 
 unsigned long long wl_param_get_val(wl_param_t *wl_param);
 unsigned long long wl_get_param_val(workload_t *wl, const char *key);
-void wl_set_param_val(workload_t *wl, const char *key, const char *arg);
+void wl_set_param_val(workload_t *wl, const char *key, unsigned long long arg);
 
 #endif

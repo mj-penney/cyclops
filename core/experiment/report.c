@@ -159,7 +159,7 @@ void batch_to_csv(batch_t *b,
 static void ps_write_metadata(FILE *file, param_sweep_t *ps)
 {
     fprintf(file,
-            "# ./cyclops -w %s -m %s -u %llu -r %llu -s %s=%s:%s:%s",
+            "# ./cyclops -w %s -m %s -u %llu -r %llu -s %s=%llu:%llu:%llu",
             ps->wl->name,
             ps->mg->name,
             ps->warmup_runs,
