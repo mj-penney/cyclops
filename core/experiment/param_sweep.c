@@ -8,12 +8,10 @@
 #include "../../include/workload.h"
 #include "./internal.h"
 
-static unsigned long long ps_n_batches_arithmetic(param_sweep_t *ps)
+static unsigned long long n_batches_arithmetic(unsigned long long low,
+                                               unsigned long long high,
+                                               unsigned long long step)
 {
-    unsigned long long low = ps->wl_param_low;
-    unsigned long long high = ps->wl_param_high;
-    unsigned long long step = ps->wl_param_step;
-
     unsigned long long diff = high - low;
     unsigned long long mod = diff % step;
 
@@ -23,12 +21,10 @@ static unsigned long long ps_n_batches_arithmetic(param_sweep_t *ps)
     return (diff / step) + 1;
 }
 
-static unsigned long long ps_n_batches_geometric(param_sweep_t *ps)
+static unsigned long long n_batches_geometric(unsigned long long low,
+                                              unsigned long long high,
+                                              unsigned long long step)
 {
-    unsigned long long low = ps->wl_param_low;
-    unsigned long long high = ps->wl_param_high;
-    unsigned long long step = ps->wl_param_step;
-
     unsigned long long val = low;
     unsigned long long n = 0;
 
@@ -47,12 +43,15 @@ static unsigned long long ps_n_batches_geometric(param_sweep_t *ps)
 /*
  * Calculates the number of batches needed to perform the parameter sweep.
  */
-static unsigned long long ps_n_batches(param_sweep_t *ps)
+static unsigned long long n_batches(unsigned long long low,
+                                    unsigned long long high,
+                                    unsigned long long step,
+                                    bool geometric)
 {
-    if (ps->geometric) {
-        return ps_n_batches_geometric(ps);
+    if (geometric) {
+        return n_batches_geometric(low, high, step);
     } else {
-        return ps_n_batches_arithmetic(ps);
+        return n_batches_arithmetic(low, high, step);
     }
 }
 
@@ -129,7 +128,10 @@ static param_sweep_t *ps_init(cyclops_cfg_t *cyclops_cfg)
     ps->wl_param_high = cyclops_cfg->ps_wl_param_high;
     ps->wl_param_step = cyclops_cfg->ps_wl_param_step;
     ps->geometric = cyclops_cfg->geometric;
-    ps->n_batches = ps_n_batches(ps);
+    ps->n_batches = n_batches(cyclops_cfg->ps_wl_param_low,
+                              cyclops_cfg->ps_wl_param_high,
+                              cyclops_cfg->ps_wl_param_step,
+                              cyclops_cfg->geometric);
 
     ps->to_csv = cyclops_cfg->param_sweep_csv;
 
