@@ -29,10 +29,10 @@ batch_t *batch_init(cyclops_cfg_t *cyclops_cfg)
     metric_grp_t *mg = mg_get_by_name(cyclops_cfg->mg_name);
     workload_t *wl = wl_get_by_name(cyclops_cfg->wl_name);
 
-    for (int i = 0; i < cyclops_cfg->n_wl_params; i++) {
+    for (int i = 0; i < cyclops_cfg->n_wl_args; i++) {
         wl_set_param_val(wl,
-                         cyclops_cfg->wl_param_keys[i],
-                         cyclops_cfg->wl_param_args[i]);
+                         cyclops_cfg->wl_args[i].key,
+                         cyclops_cfg->wl_args[i].value);
     }
 
     b->warmup_runs   = cyclops_cfg->warmup_runs;

@@ -6,6 +6,12 @@
 #define MAX_BATCH_RUNS 100
 #define MAX_PERF_COUNTERS 15
 #define MAX_PERF_RATIOS 15
+#define MAX_WL_ARGS 5
+
+typedef struct {
+    char *key;
+    char *value;
+} wl_arg_t;
 
 typedef struct {
     bool display_help;
@@ -13,17 +19,19 @@ typedef struct {
     unsigned long long batch_runs;
     char *wl_name;
     char *mg_name;
-    int n_wl_params;
-    char **wl_param_keys;
-    char **wl_param_args;
+
+    int n_wl_args;
+    wl_arg_t wl_args[MAX_WL_ARGS];
+
+    bool geometric;
     char *ps_wl_param_key;
     char *ps_wl_param_low;
     char *ps_wl_param_high;
     char *ps_wl_param_step;
+
     bool batch_csv;
     bool param_sweep_csv;
     bool report;
-    bool geometric;
 } cyclops_cfg_t;
 
 #endif
