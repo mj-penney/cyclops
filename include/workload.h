@@ -1,10 +1,13 @@
 #ifndef WORKLOAD_H
 #define WORKLOAD_H
 
+#include <stdbool.h>
+
 #include "./registry.h"
 
 typedef struct {
     const char *key;
+    bool arg_provided;
     unsigned long long arg;
     unsigned long long default_value;
 } wl_param_t;
