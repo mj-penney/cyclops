@@ -175,6 +175,10 @@ cyclops_cfg_t *cli_cfg_init(int argc, char *argv[])
         cfg->batch_csv = true;
     }
 
+    if (cfg->batch_runs == 0) {
+        cfg->batch_runs = 1;
+    }
+
     return cfg;
 }
 
