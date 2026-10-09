@@ -43,14 +43,16 @@ CORE_SRCS = \
 	core/experiment/report.c \
 	core/experiment/data_processing.c \
 	core/workload.c \
-	$(wildcard workloads/*.c)
+	$(wildcard workloads/*.c) \
+	$(wildcard workloads/*.S)
 
 # Main application sources
 APP_SRCS = core/main.c $(CORE_SRCS)
 
 # Object files
-CORE_OBJS = $(CORE_SRCS:.c=.o)
-APP_OBJS  = $(APP_SRCS:.c=.o)
+#CORE_OBJS = $(CORE_SRCS:.c=.o)
+CORE_OBJS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(CORE_SRCS)))
+APP_OBJS  = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(APP_SRCS)))
 
 # Application output
 APP_BIN = cyclops
@@ -82,6 +84,9 @@ $(APP_BIN): $(APP_OBJS)
 # Generic object compilation
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.S
+	$(CC) -c $< -o $@
 
 # Unit tests target
 unit-tests: $(UNIT_TEST_BINS)
