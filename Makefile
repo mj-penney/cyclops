@@ -14,6 +14,20 @@ CFLAGS ?= $(PROD_CFLAGS)
 # Include path
 CFLAGS += -Iinclude
 
+# Compiler target architecture (supports cross-compilation)
+TARGET_TRIPLE := $(shell $(CC) -dumpmachine)
+
+ifneq (,$(findstring aarch64,$(TARGET_TRIPLE)))
+    ARCH_ASM_SRCS := $(wildcard workloads/aarch64/*.S)
+else ifneq (,$(findstring x86_64,$(TARGET_TRIPLE)))
+    ARCH_ASM_SRCS := $(wildcard workloads/x86_64/*.S)
+else
+    $(error Unsupported compiler target architecture: $(TARGET_TRIPLE))
+endif
+
+$(info Target architecture: $(TARGET_TRIPLE))
+$(info Architecture-specific assembly: $(ARCH_ASM_SRCS))
+
 # Core reusable sources (NO main.c)
 CORE_SRCS = \
 	core/cli.c \
@@ -43,14 +57,16 @@ CORE_SRCS = \
 	core/experiment/report.c \
 	core/experiment/data_processing.c \
 	core/workload.c \
-	$(wildcard workloads/*.c)
+	$(wildcard workloads/*.c) \
+	$(ARCH_ASM_SRCS)
 
 # Main application sources
 APP_SRCS = core/main.c $(CORE_SRCS)
 
 # Object files
-CORE_OBJS = $(CORE_SRCS:.c=.o)
-APP_OBJS  = $(APP_SRCS:.c=.o)
+#CORE_OBJS = $(CORE_SRCS:.c=.o)
+CORE_OBJS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(CORE_SRCS)))
+APP_OBJS  = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(APP_SRCS)))
 
 # Application output
 APP_BIN = cyclops
@@ -82,6 +98,9 @@ $(APP_BIN): $(APP_OBJS)
 # Generic object compilation
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.S
+	$(CC) $(CPPFLAGS) -c $< -o $@
 
 # Unit tests target
 unit-tests: $(UNIT_TEST_BINS)
