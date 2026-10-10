@@ -26,17 +26,38 @@ static void post_batch(void)
     free(wl_state.array);
 }
 
-extern void test_asm_execute(wl_state_t *wl_state);
+
+#if defined(__x86_64__) || defined(__amd64__)
+
+extern void test_workload_execute_x86_64(wl_state_t *wl_state);
 
 __attribute__((noinline))
 static void execute(void)
 {
-    test_asm_execute(&wl_state);
-
-    //for (unsigned long long i = 0; i < wl_state.array_len; i++) {
-    //    printf("%llu\n", wl_state.array[i]);
-    //}
+    test_workload_execute_x86_64(&wl_state);
 }
+
+#elif defined(__aarch64__) || defined(__arm__)
+
+extern void test_workload_execute_aarch64(wl_state_t *wl_state);
+
+__attribute__((noinline))
+static void execute(void)
+{
+    test_workload_execute_aarch64(&wl_state);
+}
+
+#else
+
+__attribute__((noinline))
+static void execute(void)
+{
+    for (unsigned long long i = 0; i < wl_state.array_len; i++) {
+        printf("%llu\n", wl_state.array[i]);
+    }
+}
+
+#endif
 
 static wl_param_t params[] = {
     {
