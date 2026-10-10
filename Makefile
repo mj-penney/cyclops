@@ -44,7 +44,7 @@ CORE_SRCS = \
 	core/experiment/data_processing.c \
 	core/workload.c \
 	$(wildcard workloads/*.c) \
-	$(wildcard workloads/*.S)
+	$(wildcard workloads/x86_64/*.S)
 
 # Main application sources
 APP_SRCS = core/main.c $(CORE_SRCS)
